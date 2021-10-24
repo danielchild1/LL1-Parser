@@ -1,34 +1,42 @@
 class Production:
-    def __init__(self, **kwargs):
-        if 'nonterminal' in kwargs:
-            self.nonterminal = kwargs['nonterminal']
-        if 'words' in kwargs:
-            self.words = kwargs['words']
+    Production = []
+    name = ''
     
-    def getNonterminal(self):
-        try:
-            return self.nonterminal
-        except:
-            return None
+    def __init__(self, name, **kwargs):
+        self.name = name
+        for kw in kwargs:
+            self.Production.append(kw)
 
-    def getWords(self):
-        try:
-            return self.words
-        except:
-            return None
-    
-    def getWordsLength(self):
-        try:
-            return len(self.words)
-        except:
-            return None
-    
-    def setWords(self, words):
-        self.words = words
-    
-    def setNonterminal(self, nonterminal):
-        self.nonterminal = nonterminal
 
+#def __init__(self, **kwargs):
+    #     if 'nonterminal' in kwargs:
+    #         self.nonterminal = kwargs['nonterminal']
+    #     if 'words' in kwargs:
+    #         self.words = kwargs['words']
+    
+    # def getNonterminal(self):
+    #     try:
+    #         return self.nonterminal
+    #     except:
+    #         return None
+
+    # def getWords(self):
+    #     try:
+    #         return self.words
+    #     except:
+    #         return None
+    
+    # def getWordsLength(self):
+    #     try:
+    #         return len(self.words)
+    #     except:
+    #         return None
+    
+    # def setWords(self, words):
+    #     self.words = words
+    
+    # def setNonterminal(self, nonterminal):
+    #     self.nonterminal = nonterminal
 # class Factor:
 #     def __init__(self, **kwargs):
 #         if 'num' in kwargs:
