@@ -1,3 +1,5 @@
+print('\033[91m' + "hello brad I just " + '\033[1m' + "Learned " + '\033[0m' + '\033[94m' + " how to color the terminal" + '\033[0m' )
+
 import Production
 
 whitespace = Production('<WHITESPACE>','\s')
