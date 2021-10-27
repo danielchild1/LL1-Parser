@@ -1,80 +1,32 @@
 class Production:
-    Production = []
-    name = ''
     
-    def __init__(self, name, **kwargs):
-        self.name = name
-        for kw in kwargs:
-            self.Production.append(kw)
+    def __init__(self, **kwargs):
+        self.productions = []
+        self.lSide = kwargs['lSide']
+        for key in kwargs:
+            if key != 'lSide':
+                self.productions.append(kwargs[key])
 
-
-#def __init__(self, **kwargs):
-    #     if 'nonterminal' in kwargs:
-    #         self.nonterminal = kwargs['nonterminal']
-    #     if 'words' in kwargs:
-    #         self.words = kwargs['words']
+    def append(self, **kwargs):
+        self.lSide = kwargs['lSide']
+        for key in kwargs:
+            if key != 'lSide':
+                self.productions.append(kwargs[key])
     
-    # def getNonterminal(self):
-    #     try:
-    #         return self.nonterminal
-    #     except:
-    #         return None
-
-    # def getWords(self):
-    #     try:
-    #         return self.words
-    #     except:
-    #         return None
+    def __int__(self):
+        return len(self.productions)
     
-    # def getWordsLength(self):
-    #     try:
-    #         return len(self.words)
-    #     except:
-    #         return None
+    def __len__(self):
+        return len(self.productions)
     
-    # def setWords(self, words):
-    #     self.words = words
+    def __str__(self):
+        return self.lSide
     
-    # def setNonterminal(self, nonterminal):
-    #     self.nonterminal = nonterminal
-# class Factor:
-#     def __init__(self, **kwargs):
-#         if 'num' in kwargs:
-#             self.num = kwargs['num']
-#         if 'name' in kwargs:
-#             self.name = kwargs['name']
-#         if 'paren' in kwargs:
-#             self.paren = kwargs['paren']
-            
+    def __getitem__(self, key):
+        return self.productions[key]
 
-# class TermP:
-#     def __init__(self, **kwargs):
-#         if 'termP' in kwargs:
-#             self.termP = kwargs['termP']
-#         if 'factor' in kwargs:
-#             self.factor = kwargs['factor']
-#         if 'sym' in kwargs:
-#             self.sym = kwargs['sym']
 
-# class Term:
-#     def __init__(self, **kwargs):
-#         if 'termP' in kwargs:
-#             self.termP = kwargs['termP']
-#         if 'factor' in kwargs:
-#             self.factor = kwargs['factor']
-#         if 'sym' in kwargs:
-#             self.sym = kwargs['sym']
-
-# class ExprP:
-#     def __init__(self, **kwargs):
-#         if 'term' in kwargs:
-#             self.term = kwargs['term']
-#         if 'exprP' in kwargs:
-#             self.ExprP = kwargs['exprP']
-
-# class Expr:
-#     def __init__(self, **kwargs):
-#         if 'term' in kwargs:
-#             self.term = kwargs['term']
-#         if 'exprP' in kwargs:
-#             self.ExprP = kwargs['exprP']
+# def findProduction(name):
+#     for o in ProList:
+#         if o.lSide == name:
+#             return o
