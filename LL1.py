@@ -25,18 +25,31 @@ parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, 
     'Factor':         {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 9, ')': None, 'name': 11, 'num':10 }
 }
 
+terminals = ["eof", "+", "-", "*", "/", "(", ")", "name", "num"]
+nontTerminals = ['Goal', "Expr", "ExprP", "Term", "TermP", "Factor"]
 
 
 #sudo code on page 112 of textbook
 with open('./valid.txt')as file:
     for line in file:
 
+        word = "" #TODO: word <- NextWord();
+
         stack = []
         stack.append('eof')
         stack.append('Goal')
         focus = stack.top() #focus <- top of stack
         while True:
-            if focus == 'eof': 
+            if focus == 'eof' and word== 'eof': 
+                break; #success
+            elif focus == 'eof' or focus in terminals:
+                if focus == word:
+                    stack.pop()
+                    word = "next word" #TODO: NextWord()
+                else:
+                    raise Exception("\033[91mError: looking for symbol at top of stack\033[0m")
+            else:
+                print('f')
 
 
 
