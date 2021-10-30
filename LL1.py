@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-print('\033[91m' + "hello Brad I just " + '\033[1m' + "Learned " + '\033[0m' + '\033[94m' + "how to color the text in\033[93m the \033[4mterminal" + '\033[0m \n' )
+print('\n\033[91m' + "hello Brad I just " + '\033[1m' + "Learned " + '\033[0m' + '\033[94m' + "how to color the text in\033[93m the \033[4mterminal" + '\033[0m \n' )
 from colorama import Fore, Back, Style
 from Production import Production
 from helperFunctions import *
@@ -50,7 +50,9 @@ with open('./tests/valid.txt')as file:
                     if focus == word2Terminal(word):
                         stack.pop()
                         word = NextWord(line)
+                        line = line.removeprefix(" ")
                         line = line.removeprefix(word)
+
                     else:
                         raise Exception(" looking for symbol at top of stack")
                 else:
