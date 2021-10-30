@@ -1,20 +1,17 @@
 import re
 terminals = ["eof", "+", "-", "*", "/", "(", ")", "name", "num"]
 nonTerminals = ['Goal', "Expr", "ExprP", "Term", "TermP", "Factor"]
-
+regNum = re.compile(r'^[0-9]+')
+regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*')
 def word2Terminal(oj):
     if oj in terminals:
         return oj
     else:
-        try:
-            temp = int(oj)
-            if isinstance(temp, int):
-                return "num"
-            else:
-                raise Exception("not an integer")
-        except:
-            if re.search('^[a-z|A-Z]+[a-z|A-Z|0-9|_]*', oj):
-                return "name"
+        if regName.match(oj):
+            return "name"
+        if regNum.match(oj):
+            return "num"
+
 
 
 def NextWord(line):
@@ -25,17 +22,18 @@ def NextWord(line):
         for c in line:
             if c in charList:
                 if len(word) == 0:
-                    line.removeprefix(c)
+                    line = line.removeprefix(c)
                     return c
                 else:
-                    line.removeprefix(word)
+                    line = line.removeprefix(word)
                     return word
-            elif c == " ":
-                line.removeprefix(word)
+            elif c == " " and len(word) > 0:
+                line = line.removeprefix(c)
                 return word
             else:
-                line.removeprefix(word)
                 word += c
 
-        line.removeprefix(word)
+        line = line.removeprefix(word)
         return word
+    else:
+        return 'eof'
