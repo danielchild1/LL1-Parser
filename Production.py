@@ -13,6 +13,12 @@ class Production:
             if key != 'lSide':
                 self.productions.append(kwargs[key])
     
+    def regurgitate(self):
+        thing2Return = []
+        for el in reversed(self.productions):
+            thing2Return.append(el)
+        return thing2Return
+    
     def __int__(self):
         return len(self.productions)
     
