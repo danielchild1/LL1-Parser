@@ -1,8 +1,5 @@
-import re
-terminals = ["eof", "+", "-", "*", "/", "(", ")", "name", "num"]
-nonTerminals = ['Goal', "Expr", "ExprP", "Term", "TermP", "Factor"]
-regNum = re.compile(r'^[0-9]+')
-regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*')
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "ε"]
+nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
 parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 0, ')': None, 'name': 0, 'num':0 },
     'Expr':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 1, ')': None, 'name': 1, 'num':1 },
     'ExprP':          {'eof': 4,    '+': 2   , '-': 3   , '*': None, '/': None, '(': None,')': 4, 'name': None, 'num':None},
@@ -12,7 +9,13 @@ parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, 
 }
 
 
-
+import re
+regNum = re.compile(r'^[0-9]+.?[0-9]*$')
+regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
+regspacenegnum = re.compile(r'^\s-[0-9]+.?[0-9]*$')
+regspacenegname = re.compile(r'^\s-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
+regnegnum = re.compile(r'^-[0-9]+.?[0-9]*$')
+regnegname = re.compile(r'^-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 def word2Terminal(oj):
     if oj in terminals:
         return oj
@@ -21,29 +24,53 @@ def word2Terminal(oj):
             return "name"
         if regNum.match(oj):
             return "num"
+        if regspacenegname.match(oj):
+            return "spacenegname"
+        if regspacenegnum.match(oj):
+            return "spacenegnum"
+        if regnegname.match(oj):
+            return "negname"
+        if regnegnum.match(oj):
+            return "negnum"
 
 
 
 def NextWord(line):
-    charList = ["+", "-", "*", "/", "(", ")"]
+    charList = ["+", "-", "*", "/", "(", ")", "^"]
     word = ""
+    numNonSpaceChars = 0
+    numSpaceChars = 0
 
     if len(line) > 0:
-        for c in line:
+        for c, cf in zip(line, line[1:]+[None]):
             if c in charList:
-                if len(word) == 0:
+                if c == '-':
+                    if regNum.match(cf): #if the enxt word is a diget
+                        word += c
+                        numNonSpaceChars += 1
+                    else:
+                        return '-'
+                if numNonSpaceChars == 0 and numSpaceChars == 0:
                     line = line.removeprefix(c)
                     return c
                 else:
                     line = line.removeprefix(word)
                     return word
-            elif c == " " and len(word) > 0:
+            elif c == " " and len(word) > 0 and numNonSpaceChars > 0:
                 line = line.removeprefix(word)
-                return word
+                break
             else:
                 if c != " ":
-                    word += c
+                    numNonSpaceChars += 1
+                else:
+                    numSpaceChars += 1
+                word += c
 
+        if '-' in word:
+            while numSpaceChars > 1:
+                word = word.removeprefix(" ")
+                numSpaceChars -= 1
+        
         line = line.removeprefix(word)
         return word
     else:

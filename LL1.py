@@ -26,10 +26,18 @@ l17 = Production(lSide="PosVal", f="num")
 l18 = Production(lSide="PosVal", f="name")
 l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
 l20 = Production(lSide="SpaceNegVal", f="spacenegname")
-
 ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]
 
 
+#FIRST
+First = {}
+for t in terminals:
+    First[t] = t
+for a in nonTerminals:
+    First[a] = None
+while True: #TODO: figure out when to terminate this loop
+    for p in ProList:
+        #TODO: is if B where B is T U NT
 
 
 
