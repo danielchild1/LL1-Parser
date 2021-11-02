@@ -1,5 +1,9 @@
-terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "ε"]
-nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+# terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "ε"]
+# nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+
+terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
+nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
+
 parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 0, ')': None, 'name': 0, 'num':0 },
     'Expr':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 1, ')': None, 'name': 1, 'num':1 },
     'ExprP':          {'eof': 4,    '+': 2   , '-': 3   , '*': None, '/': None, '(': None,')': 4, 'name': None, 'num':None},
@@ -77,6 +81,40 @@ def NextWord(line):
         return 'eof'
 
 
+def onion(first, second):
+    ret = []
+
+    if isinstance(first, list):
+        for i in first:
+            if i != None and i not in ret:
+                ret.append(i)
+    else:
+        if first != None:
+            ret.append(first)
+
+
+    if isinstance(second, list):
+        for j in second:
+            if j != None and j not in ret:
+                ret.append(j)
+    else:
+        if second != None:
+            ret.append(second)
+
+
+    # if len(ret) == 0:
+    #     return None
+    # elif len(ret) ==1:
+    #     return ret[0]
+
+    return ret
+
+
+def subEpsolon(p):
+    if p == "ε":
+        return None
+    else:
+        return p
 
 # l0 = Production(lSide="Goal", f="Expr")
 # l1 = Production(lSide="Expr", f="Term", s="ExprP")

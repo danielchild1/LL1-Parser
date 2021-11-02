@@ -19,6 +19,15 @@ class Production:
             thing2Return.append(el)
         return thing2Return
     
+    def existsInProduction(self, thething):
+        for p in self.productions:
+            if p == thething:
+                return True
+        return False
+    
+    def getLastPro(self):
+        return self.productions[len(self.productions) - 1]
+
     def __int__(self):
         return len(self.productions)
     
