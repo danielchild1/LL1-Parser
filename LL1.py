@@ -146,10 +146,11 @@ for A in nonTerminals:
 
 
 #sudo code on page 112 of textbook
-with open('./tests/invalid.txt')as file:
+with open('./tests/valid.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
+        lastWordWasANumberVarOrRightparens = False
         try:
             word = NextWord(line)
             line = line.removeprefix(word)
@@ -164,7 +165,7 @@ with open('./tests/invalid.txt')as file:
                 elif focus == 'eof' or focus in terminals:
                     if focus == word2Terminal(word):
                         stack.pop()
-                        word = NextWord(line)
+                        word = NextWord(line, lastWordWasANumberVarOrRightparens)
                         line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
@@ -180,6 +181,11 @@ with open('./tests/invalid.txt')as file:
                                 stack.append(reger)
                     else:
                         raise Exception(" not found in parse table")
+                nameNumList = ["name", "num", "spacenegname", "spacenegnum", "negname", "negnum", ")"]
+                if word2Terminal(word) in nameNumList:
+                    lastWordWasANumberVarOrRightparens = True
+                else:
+                    lastWordWasANumberVarOrRightparens = False
                 focus = stack[len(stack)-1]
         except Exception as e:
             print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )

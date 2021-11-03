@@ -13,6 +13,7 @@ nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "
 # }
 
 
+from os import fwalk
 import re
 regNum = re.compile(r'^[0-9]+.?[0-9]*$')
 regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
@@ -39,7 +40,7 @@ def word2Terminal(oj):
 
 
 
-def NextWord(line):
+def NextWord(line, lastWordWasANumberVarOrRightparens=False):
     charList = ["+", "-", "*", "/", "(", ")", "^"]
     word = ""
     numNonSpaceChars = 0
@@ -55,7 +56,7 @@ def NextWord(line):
                 if numNonSpaceChars > 0:
                     break
                 if c == '-':
-                    if regNum.match(cf): #if the enxt word is a diget or regName.match(cf)
+                    if lastWordWasANumberVarOrRightparens == False: # and regNum.match(cf) if the enxt word is a diget or regName.match(cf)
                         word += c
                         numNonSpaceChars += 1
                         continue
