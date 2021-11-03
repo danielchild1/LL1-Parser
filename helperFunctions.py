@@ -55,6 +55,8 @@ def NextWord(line, lastWordWasANumberVarOrRightparens=False):
             if c in charList:
                 if numNonSpaceChars > 0:
                     break
+                if c == '(':
+                    return '('
                 if c == '-':
                     if lastWordWasANumberVarOrRightparens == False: # and regNum.match(cf) if the enxt word is a diget or regName.match(cf)
                         word += c
@@ -84,9 +86,10 @@ def NextWord(line, lastWordWasANumberVarOrRightparens=False):
             while numSpaceChars > 1:
                 word = word.removeprefix(" ")
                 numSpaceChars -= 1
-        
+        else:
+            word = word.removeprefix(' ')
+
         line = line.removeprefix(word)
-        word = word.removeprefix(' ')
         return word
     else:
         return 'eof'

@@ -5,6 +5,7 @@ print('\n\033[91m' + "hello Brad I just " + '\033[1m' + "Learned " + '\033[0m' +
 from colorama import Fore, Back, Style
 from Production import Production
 from helperFunctions import *
+from pprint import pprint
 
 try:
     testString = " 343 343 343 343 "
@@ -21,9 +22,9 @@ l3 = Production(lSide="RTerm", f="RFactor", s="TermP")
 l4 = Production(lSide="ExprP", f="+", s="RTerm", t="ExprP")
 l5 = Production(lSide="ExprP", f="-", s="RTerm", t="ExprP")
 l6 = Production(lSide="ExprP", f="ε")
-l7 = Production(lSide="TermP", f="*", s="RTerm", t="TermP")
-l8 = Production(lSide="TermP", f="/", s="RTerm", t="TermP")
-l8p2 = Production(lSide="TermP", f="^", s="RTerm", t="TermP")
+l7 = Production(lSide="TermP", f="*", s="RFactor", t="TermP")
+l8 = Production(lSide="TermP", f="/", s="RFactor", t="TermP")
+l8p2 = Production(lSide="TermP", f="^", s="RFactor", t="TermP")
 l9 = Production(lSide="TermP", f="ε")
 l10 = Production(lSide='LFactor', f='GFactor')
 l11 = Production(lSide='LFactor', f='negnum') #negative val without space only left term
@@ -38,19 +39,6 @@ l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
 l20 = Production(lSide="SpaceNegVal", f="spacenegname")
 ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l8p2, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]
 
-# l0 = Production(lSide="Goal", f="Expr")
-# l1 = Production(lSide="Expr", f="Term", s="ExprP")
-# l2 = Production(lSide="ExprP", f="+", s="Term", t="ExprP")
-# l3 = Production(lSide="ExprP", f="-", s="Term", t="ExprP")
-# l4 = Production(lSide='ExprP', f="ε")
-# l5 = Production(lSide='Term', f="Factor", s="TermP")
-# l6 = Production(lSide='TermP', f="*", s="Factor", t="TermP")
-# l7 = Production(lSide="TermP", f="/", s="Factor", t="TermP")
-# l9 = Production(lSide='TermP', f="ε")
-# l10 = Production(lSide='Factor', f="(", s="Expr", t=")")
-# l11 = Production(lSide='Factor', f="num")
-# l12 = Production(lSide='Factor', f="name")
-# ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l9, l10, l11, l12]
 
 #FIRST
 First = {}
@@ -144,6 +132,7 @@ for A in nonTerminals:
             if 'eof' in firstPlus(p) and parseTable[A, 'eof'] == None:
                 parseTable[A, 'eof'] = i
 
+#pprint(parseTable)
 
 #sudo code on page 112 of textbook
 with open('./tests/valid.txt')as file:
