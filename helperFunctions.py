@@ -1,16 +1,16 @@
-# terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "ε"]
-# nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
+nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
 
-terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
-nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
+# terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
+# nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
 
-parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 0, ')': None, 'name': 0, 'num':0 },
-    'Expr':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 1, ')': None, 'name': 1, 'num':1 },
-    'ExprP':          {'eof': 4,    '+': 2   , '-': 3   , '*': None, '/': None, '(': None,')': 4, 'name': None, 'num':None},
-    'Term':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 5, ')': None, 'name': 5, 'num':5 },
-    'TermP':          {'eof': 8, '+': 8, '-': 8, '*': 6, '/': 7, '(': None, ')': 8, 'name': None, 'num': None },
-    'Factor':         {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 9, ')': None, 'name': 11, 'num':10 }
-}
+# parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 0, ')': None, 'name': 0, 'num':0 },
+#     'Expr':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 1, ')': None, 'name': 1, 'num':1 },
+#     'ExprP':          {'eof': 4,    '+': 2   , '-': 3   , '*': None, '/': None, '(': None,')': 4, 'name': None, 'num':None},
+#     'Term':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 5, ')': None, 'name': 5, 'num':5 },
+#     'TermP':          {'eof': 8, '+': 8, '-': 8, '*': 6, '/': 7, '(': None, ')': 8, 'name': None, 'num': None },
+#     'Factor':         {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 9, ')': None, 'name': 11, 'num':10 }
+# }
 
 
 import re
@@ -46,20 +46,29 @@ def NextWord(line):
     numSpaceChars = 0
 
     if len(line) > 0:
-        for c, cf in zip(line, line[1:]+[None]):
+        #for c, cf in zip(line, line[1:]+[None]):
+        for i, c in enumerate(line):
+            cf = None
+            if len(line) > (i+1):
+                cf = line[i+1]
             if c in charList:
+                if numNonSpaceChars > 0:
+                    break
                 if c == '-':
-                    if regNum.match(cf): #if the enxt word is a diget
+                    if regNum.match(cf): #if the enxt word is a diget or regName.match(cf)
                         word += c
                         numNonSpaceChars += 1
+                        continue
                     else:
                         return '-'
                 if numNonSpaceChars == 0 and numSpaceChars == 0:
                     line = line.removeprefix(c)
                     return c
                 else:
-                    line = line.removeprefix(word)
-                    return word
+                    if cf == " ":
+                        return c
+
+                    word += c   
             elif c == " " and len(word) > 0 and numNonSpaceChars > 0:
                 line = line.removeprefix(word)
                 break
@@ -76,6 +85,7 @@ def NextWord(line):
                 numSpaceChars -= 1
         
         line = line.removeprefix(word)
+        word = word.removeprefix(' ')
         return word
     else:
         return 'eof'
@@ -98,7 +108,7 @@ def onion(first, second):
             if j != None and j not in ret:
                 ret.append(j)
     else:
-        if second != None:
+        if second != None and second not in ret:
             ret.append(second)
 
 
@@ -111,10 +121,19 @@ def onion(first, second):
 
 
 def subEpsolon(p):
+    if isinstance(p, list):
+        newList = []
+        for l in p:
+            if l != "ε":
+                newList.append(l)
+        return newList
+
     if p == "ε":
         return None
     else:
         return p
+
+
 
 # l0 = Production(lSide="Goal", f="Expr")
 # l1 = Production(lSide="Expr", f="Term", s="ExprP")
