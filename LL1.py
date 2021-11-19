@@ -134,6 +134,10 @@ for A in nonTerminals:
 
 #pprint(parseTable)
 
+#simple binary tree LL1 parser
+from tree import Tree
+tree = Tree()
+
 #sudo code on page 112 of textbook
 with open('./tests/valid.txt')as file:
     for line in file:
