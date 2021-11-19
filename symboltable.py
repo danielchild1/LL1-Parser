@@ -3,7 +3,11 @@ class SymbolTable:
         self.map = {}
     
     def Lookup(self, name):
-        return self.map[name]
+        try:
+            return self.map[name]
+        except:
+            return None
+        
     
     def Insert(self, name, record):
         self.map[name] = record
