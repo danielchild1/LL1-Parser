@@ -136,14 +136,16 @@ for A in nonTerminals:
 
 #simple binary tree LL1 parser
 from tree import Tree
-tree = Tree()
 
+treeList = []
 #sudo code on page 112 of textbook
 with open('./tests/valid.txt')as file:
     for line in file:
+        integerIndexStack = []
         line = line.strip()
         ogLine = line
         lastWordWasANumberVarOrRightparens = False
+        tree = Tree()
         try:
             word = NextWord(line)
             line = line.removeprefix(word)
@@ -157,8 +159,9 @@ with open('./tests/valid.txt')as file:
                     break; #success
                 elif focus == 'eof' or focus in terminals:
                     if focus == word2Terminal(word):
-                        stack.pop()
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
+                        if tree.poppedOffTheStack(stack.pop(), word):
+                            tree.addPlaceholder(stack[len(stack)-1])
                         line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
@@ -167,7 +170,7 @@ with open('./tests/valid.txt')as file:
                 else:
                     table = parseTable[focus,word2Terminal(word)]
                     if table != None:
-                        stack.pop()
+                        tree.poppedOffTheStack(stack.pop())
                         regergitatedMess = ProList[table].regurgitate()
                         for reger in regergitatedMess:
                             if reger != "ε":
@@ -184,6 +187,7 @@ with open('./tests/valid.txt')as file:
             print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
+        treeList.append(tree)
 
 
 exit(0)

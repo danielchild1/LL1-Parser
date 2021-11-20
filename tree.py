@@ -1,4 +1,5 @@
 from colorama import Fore, Back, Style
+from helperFunctions import terminals, nonOperatorTerminal, nonTerminals, operators
 class Node:
     nodeid = 0
     def __init__(self, operator):
@@ -25,12 +26,16 @@ class Node:
 #operator
 
 #helpFul lecture video: https://1533221.mediaspace.kaltura.com/media/CS%206820%20Nov%203%202021/1_j3e7nuyw
+#all three ways: https://1533221.mediaspace.kaltura.com/media/CS+6820+Nov+8+2021/1_lxrr725p
 
 class Tree:
     def __init__(self, operator=None):
         try:
             self.topNode = Node(operator)
-            self.numNodes = 0
+            if operator == None:
+                self.numNodes = -1
+            else:
+                self.numNodes = 1
             self.currNode = self.topNode
         except:
             self.errorMessage("could not init object. operator=" + operator)
@@ -77,7 +82,7 @@ class Tree:
             newparent = Node(operator)
             newparent.left = self.topNode
             self.topNode = newparent
-            self.currNode += 1
+            self.numNodes += 1
         except:
             self.errorMessage("exception thrown in addParent() operator="+operator)
     
@@ -86,13 +91,59 @@ class Tree:
             if self.currNode == self.topNode:
                 self.addParent(operator)
             else:
-                newNode = Node(operator)
-                newNode.left = self.currNode.left
+                newNode = Node(self.currNode.operator.copy())
+                self.currNode.operator = operator
+                newNode.left = self.currNode.left.copy()
                 self.currNode.left = newNode
-                self.currNode += 1
+                self.numNodes += 1
 
         except:
             self.errorMessage("exception thrown in addParent2current() operator="+operator)
     
+    def poppedOffTheStack(self, stackObject, word): #todo: might need to use this word
+        try:
+            #If a non-operator terminal (such as a number or a variable name) would be consumed off that stack, one of two options will occur:
+            if stackObject in nonOperatorTerminal:
+                # If this is the first node of the tree, create a node and put that token in it.  Make this node the current focus node. 
+                if self.topNode.operator == None and self.numNodes == -1:
+                    newTop = Node(stackObject)
+                    self.topNode.operator = newTop
+                    self.currNode = self.topNode
+                    self.numNodes = 1
+
+                #If the current focus node contains a non-terminal placeholder value, overwrite its value with the current token.  
+                # Keep the current focus on this node.
+                elif self.currNode.operator in nonTerminals:
+                    self.currNode.operator = stackObject
+            
+            #if an operator is consumed off of the stack
+            if stackObject in operators:
+                # If the current focus node is the root node, then create a parent node relative to the current 
+                # focus node, then place this operator token in the node.  The parent’s left link will point to 
+                # the node it came from.  Make this operator node the current focus node.
+                if self.currNode == self.topNode:
+                    self.addParent(stackObject)
+                    self.currNode = self.topNode
+                    return True
+
+                # Otherwise, create a new node containing an operator value.  This node will take the 
+                # position in the tree that the current focus node did, and current focus node will become 
+                # the left child of this new node.  Make this node containing an operator value the current 
+                # focus node. 
+                else:
+                    self.addParent2current(stackObject)
+                    return True
+            return False
+
+        except:
+            self.errorMessage("Exception thrown in poppedOffTheStack(). stackObject=" + stackObject)
+    
+    def addPlaceholder(self, placeHolder):
+        try:
+            newNode = Node(placeHolder)
+            self.currNode.right = newNode
+            self.currNode = self.currNode.right
+        except:
+             self.errorMessage("Excpetion thrown in addPlaceHolder(). placeHolder=" + placeHolder)
     def errorMessage(self, message):
         print(Fore.YELLOW + Style.BRIGHT + "Error: " + Style.NORMAL + message + Style.RESET_ALL)

@@ -1,4 +1,6 @@
 terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
+nonOperatorTerminals = [ "name","(", ")", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
+operators = ["+", "-", "*", "/", "^"]
 nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
 
 # terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
