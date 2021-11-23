@@ -31,6 +31,7 @@ class Node:
 class Tree:
     def __init__(self, operator=None):
         try:
+            self.nodePointers = []
             self.topNode = Node(operator)
             if operator == None:
                 self.numNodes = -1
@@ -45,17 +46,21 @@ class Tree:
             return self.numNodes
         except:
             self.errorMessage("error in len. (Good thing I added this)")
-        
+    
+    def topStackNode(self):
+        return self.nodePointers[len(self.nodePointers)-1]
 
     def goLeft(self):
         try:
+            self.nodePointers.append(self.topStackNode().left)
             self.currNode = self.currNode.left
         except:
             self.errorMessage("problem in goLeft()")
     
     def goRight(self):
         try:
-            self.currNode = self.currNode.right
+            self.nodePointers.append(self.topStackNode().right)
+            self.currNode = self.currNode.left
         except:
             self.errorMessage("problem in goRight()")
 
@@ -73,7 +78,7 @@ class Tree:
             self.currNode.right = Node(operator)
             self.numNodes += 1
             if move:
-                self.goRight
+                self.goRight()
         except:
             self.errorMessage("exception thrown in addNodeRight() operator="+operator+" move="+move)
 
@@ -83,6 +88,7 @@ class Tree:
             newparent.left = self.topNode
             self.topNode = newparent
             self.numNodes += 1
+            self.nodePointers.insert(0,newparent)
         except:
             self.errorMessage("exception thrown in addParent() operator="+operator)
     
@@ -96,6 +102,7 @@ class Tree:
                 newNode.left = self.currNode.left.copy()
                 self.currNode.left = newNode
                 self.numNodes += 1
+                self.nodePointers.append(newNode)
 
         except:
             self.errorMessage("exception thrown in addParent2current() operator="+operator)
