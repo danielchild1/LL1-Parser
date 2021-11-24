@@ -1,5 +1,5 @@
 from colorama import Fore, Back, Style
-from helperFunctions import terminals, nonOperatorTerminal, nonTerminals, operators
+from helperFunctions import terminals, nonOperatorTerminals, nonTerminals, operators
 class Node:
     nodeid = 0
     def __init__(self, operator):
@@ -32,6 +32,7 @@ class Tree:
     def __init__(self, operator=None):
         try:
             self.nodePointers = []
+            self.integerStack = []
             self.topNode = Node(operator)
             if operator == None:
                 self.numNodes = -1
@@ -110,11 +111,12 @@ class Tree:
     def poppedOffTheStack(self, stackObject, word): #todo: might need to use this word
         try:
             #If a non-operator terminal (such as a number or a variable name) would be consumed off that stack, one of two options will occur:
-            if stackObject in nonOperatorTerminal:
+            if stackObject in nonOperatorTerminals:
                 # If this is the first node of the tree, create a node and put that token in it.  Make this node the current focus node. 
                 if self.topNode.operator == None and self.numNodes == -1:
-                    newTop = Node(stackObject)
-                    self.topNode.operator = newTop
+                    #newTop = Node(stackObject)
+                    self.topNode.operator = stackObject
+                    self.nodePointers = [self.topNode]
                     self.currNode = self.topNode
                     self.numNodes = 1
 
@@ -145,12 +147,25 @@ class Tree:
         except:
             self.errorMessage("Exception thrown in poppedOffTheStack(). stackObject=" + stackObject)
     
-    def addPlaceholder(self, placeHolder):
+    def addRONT(self, placeHolder, index):
+        '''Next, this code must remember when this RONT’s full usage through the parsing is done, or in 
+            other words, when the right operand is done.  The best way to do this is that just prior to 
+            consuming the RONT on the stack, record the stack’s size and push that value in a second stack 
+            which holds integer values'''
         try:
             newNode = Node(placeHolder)
             self.currNode.right = newNode
             self.currNode = self.currNode.right
+            self.integerStack.append(index)
         except:
              self.errorMessage("Excpetion thrown in addPlaceHolder(). placeHolder=" + placeHolder)
+    
+    def returnCurrNodeFocusToParrent(self):
+        try:
+            self.nodePointers.pop()
+            self.currNode = self.nodePointers[len(self.nodePointers)-1]
+        except:
+            self.errorMessage("Excpetion thrown in returnCurrNodeFocusToParrent")
+
     def errorMessage(self, message):
         print(Fore.YELLOW + Style.BRIGHT + "Error: " + Style.NORMAL + message + Style.RESET_ALL)

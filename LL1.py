@@ -134,14 +134,27 @@ for A in nonTerminals:
 
 #pprint(parseTable)
 
-#simple binary tree LL1 parser
-from tree import Tree
 
+from tree import Tree
 treeList = []
+ronts = ['RTerm', 'RFactor']
+
+
+    # needRont = tree.poppedOffTheStack(itemPopedOff, word)
+    # if needRont:
+    #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
+    #     lastItemWasARont = True
+    # # if needRont == False and lastItemWasARont == True:
+    # #     lastItemWasARont = False
+    # elif needRont == False and lastItemWasARont == False:
+    #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
+    #         tree.integerStack.pop()
+    #         tree.returnCurrNodeFocusToParrent()
+
+#simple binary tree LL1 parser
 #sudo code on page 112 of textbook
 with open('./tests/valid.txt')as file:
     for line in file:
-        integerIndexStack = []
         line = line.strip()
         ogLine = line
         lastWordWasANumberVarOrRightparens = False
@@ -160,8 +173,18 @@ with open('./tests/valid.txt')as file:
                 elif focus == 'eof' or focus in terminals:
                     if focus == word2Terminal(word):
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
-                        if tree.poppedOffTheStack(stack.pop(), word):
-                            tree.addPlaceholder(stack[len(stack)-1])
+
+                        #NEW ASSIGNMENT CODE
+                        itemPopedOff = stack.pop()
+                        needRont = tree.poppedOffTheStack(itemPopedOff, word)
+                        if needRont:
+                            tree.addRONT(stack[len(stack)-1],len(stack)-1)
+                        if itemPopedOff not in operators and itemPopedOff not in ronts:
+                            if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
+                                tree.integerStack.pop()
+                                tree.returnCurrNodeFocusToParrent()
+                        #END NEW ASSIGNMENT CODE
+                        
                         line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
@@ -170,7 +193,19 @@ with open('./tests/valid.txt')as file:
                 else:
                     table = parseTable[focus,word2Terminal(word)]
                     if table != None:
-                        tree.poppedOffTheStack(stack.pop())
+
+                        #NEW ASSIGNMENT CODE
+                        itemPopedOff = stack.pop()
+                        needRont = tree.poppedOffTheStack(itemPopedOff, word)
+                        if needRont:
+                            tree.addRONT(stack[len(stack)-1],len(stack)-1)
+                        if itemPopedOff not in operators and itemPopedOff not in ronts:
+                            if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
+                                tree.integerStack.pop()
+                                tree.returnCurrNodeFocusToParrent()
+                        #END NEW ASSIGNMENT CODE
+
+
                         regergitatedMess = ProList[table].regurgitate()
                         for reger in regergitatedMess:
                             if reger != "ε":
