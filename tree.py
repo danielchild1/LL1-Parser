@@ -1,5 +1,5 @@
 from colorama import Fore, Back, Style
-from helperFunctions import terminals, nonOperatorTerminals, nonTerminals, operators
+from helperFunctions import terminals, nonOperatorTerminals, nonTerminals, operators, ronts
 class Node:
     nodeid = 0
     def __init__(self, operator):
@@ -98,9 +98,9 @@ class Tree:
             if self.currNode == self.topNode:
                 self.addParent(operator)
             else:
-                newNode = Node(self.currNode.operator.copy())
+                newNode = Node(self.currNode.operator)
                 self.currNode.operator = operator
-                newNode.left = self.currNode.left.copy()
+                newNode.left = self.currNode.left
                 self.currNode.left = newNode
                 self.numNodes += 1
                 self.nodePointers.append(newNode)
@@ -110,12 +110,14 @@ class Tree:
     
     def poppedOffTheStack(self, stackObject, word): #todo: might need to use this word
         try:
+
+
             #If a non-operator terminal (such as a number or a variable name) would be consumed off that stack, one of two options will occur:
             if stackObject in nonOperatorTerminals:
                 # If this is the first node of the tree, create a node and put that token in it.  Make this node the current focus node. 
                 if self.topNode.operator == None and self.numNodes == -1:
                     #newTop = Node(stackObject)
-                    self.topNode.operator = stackObject
+                    self.topNode.operator = word
                     self.nodePointers = [self.topNode]
                     self.currNode = self.topNode
                     self.numNodes = 1
@@ -123,7 +125,7 @@ class Tree:
                 #If the current focus node contains a non-terminal placeholder value, overwrite its value with the current token.  
                 # Keep the current focus on this node.
                 elif self.currNode.operator in nonTerminals:
-                    self.currNode.operator = stackObject
+                    self.currNode.operator = word
             
             #if an operator is consumed off of the stack
             if stackObject in operators:

@@ -137,19 +137,7 @@ for A in nonTerminals:
 
 from tree import Tree
 treeList = []
-ronts = ['RTerm', 'RFactor']
 
-
-    # needRont = tree.poppedOffTheStack(itemPopedOff, word)
-    # if needRont:
-    #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
-    #     lastItemWasARont = True
-    # # if needRont == False and lastItemWasARont == True:
-    # #     lastItemWasARont = False
-    # elif needRont == False and lastItemWasARont == False:
-    #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
-    #         tree.integerStack.pop()
-    #         tree.returnCurrNodeFocusToParrent()
 
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
@@ -172,19 +160,19 @@ with open('./tests/valid.txt')as file:
                     break; #success
                 elif focus == 'eof' or focus in terminals:
                     if focus == word2Terminal(word):
-                        word = NextWord(line, lastWordWasANumberVarOrRightparens)
 
                         #NEW ASSIGNMENT CODE
                         itemPopedOff = stack.pop()
                         needRont = tree.poppedOffTheStack(itemPopedOff, word)
                         if needRont:
                             tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        if itemPopedOff not in operators and itemPopedOff not in ronts:
+                        if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
                             if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
                                 tree.integerStack.pop()
                                 tree.returnCurrNodeFocusToParrent()
                         #END NEW ASSIGNMENT CODE
                         
+                        word = NextWord(line, lastWordWasANumberVarOrRightparens)
                         line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
@@ -199,7 +187,7 @@ with open('./tests/valid.txt')as file:
                         needRont = tree.poppedOffTheStack(itemPopedOff, word)
                         if needRont:
                             tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        if itemPopedOff not in operators and itemPopedOff not in ronts:
+                        if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
                             if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
                                 tree.integerStack.pop()
                                 tree.returnCurrNodeFocusToParrent()

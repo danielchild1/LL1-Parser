@@ -2,6 +2,7 @@ terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegn
 nonOperatorTerminals = [ "name","(", ")", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
 operators = ["+", "-", "*", "/", "^"]
 nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+ronts = ['RTerm', 'RFactor']
 
 # terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
