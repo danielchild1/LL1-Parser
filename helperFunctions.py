@@ -1,8 +1,9 @@
-terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
-nonOperatorTerminals = [ "name","(", ")", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
+nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "powerP", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'return', '=', 'ε', 'PowerP']
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value']
+nonOperatorTerminals = ["eof", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε", "{", "}", ",", "ish", "result", "procedure"]
 operators = ["+", "-", "*", "/", "^"]
-nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
-ronts = ['RTerm', 'RFactor']
+# nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 
 # terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
@@ -156,3 +157,27 @@ def subEpsolon(p):
 # l11 = Production(lSide='Factor', f="num")
 # l12 = Production(lSide='Factor', f="name")
 # ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l9, l10, l11, l12]
+
+# l0 = Production(lSide="Goal", f="Expr")
+# l1 = Production(lSide="Expr", f="LTerm", s="ExprP")
+# l2 = Production(lSide="LTerm", f="LFactor", s="TermP")
+# l3 = Production(lSide="RTerm", f="RFactor", s="TermP")
+# l4 = Production(lSide="ExprP", f="+", s="RTerm", t="ExprP")
+# l5 = Production(lSide="ExprP", f="-", s="RTerm", t="ExprP")
+# l6 = Production(lSide="ExprP", f="ε")
+# l7 = Production(lSide="TermP", f="*", s="RFactor", t="TermP")
+# l8 = Production(lSide="TermP", f="/", s="RFactor", t="TermP")
+# l8p2 = Production(lSide="TermP", f="^", s="RFactor", t="TermP")
+# l9 = Production(lSide="TermP", f="ε")
+# l10 = Production(lSide='LFactor', f='GFactor')
+# l11 = Production(lSide='LFactor', f='negnum') #negative val without space only left term
+# l12 = Production(lSide='LFactor', f='negname') #negative name without space only left term
+# l13 = Production(lSide='RFactor', f='GFactor')
+# l14 = Production(lSide='GFactor', f='(', s="Expr", t=")")
+# l15 = Production(lSide='GFactor', f='PosVal')
+# l16 = Production(lSide='GFactor', f='SpaceNegVal')
+# l17 = Production(lSide="PosVal", f="num")
+# l18 = Production(lSide="PosVal", f="name")
+# l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
+# l20 = Production(lSide="SpaceNegVal", f="spacenegname")
+# ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l8p2, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]

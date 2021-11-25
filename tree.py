@@ -34,6 +34,8 @@ class Tree:
             self.nodePointers = []
             self.integerStack = []
             self.topNode = Node(operator)
+            self.traversalStack = []
+            self.value = 0
             if operator == None:
                 self.numNodes = -1
             else:
@@ -113,15 +115,6 @@ class Tree:
                 self.nodePointers.append(parentNode.left)
                 self.nodePointers.append(parentNode.left.right)
                 self.numNodes += 1
-                # oldLeft = parentNode.left
-                # parentNode.left = Node(operator)
-                # parentNode.left.left = oldLeft
-                # self.currNode = parentNode.left
-                # self.nodePointers.append(self.currNode)
-                # self.currNode.right = Node()
-                # self.currNode = self.currNode.right
-                # self.nodePointers.append(self.currNode)
-                # self.numNodes += 1
 
 
         except:
@@ -154,48 +147,13 @@ class Tree:
                         self.nodePointers.append(self.currNode)
                     else:
                         self.addParent2current(stackObject)
-                        # self.currNode.right = Node()
-                        # self.nodePointers.append(self.currNode.right)
-                        # self.currNode = self.currNode.right
             if stackObject in nonTerminals:
 
                 if len(self.integerStack) > 0:
                     if len(wholeStack)+1 == self.integerStack[len(self.integerStack)-1]:
                         self.returnCurrNodeFocusToParrent()
                         self.integerStack.pop()
-            # #If a non-operator terminal (such as a number or a variable name) would be consumed off that stack, one of two options will occur:
-            # if stackObject in nonOperatorTerminals:
-            #     # If this is the first node of the tree, create a node and put that token in it.  Make this node the current focus node. 
-            #     if self.topNode.operator == None and self.numNodes == -1:
-            #         #newTop = Node(stackObject)
-            #         self.topNode.operator = word
-            #         self.nodePointers = [self.topNode]
-            #         self.currNode = self.topNode
-            #         self.numNodes = 1
-
-            #     #If the current focus node contains a non-terminal placeholder value, overwrite its value with the current token.  
-            #     # Keep the current focus on this node.
-            #     elif self.currNode.operator in nonTerminals:
-            #         self.currNode.operator = word
-            
-            # #if an operator is consumed off of the stack
-            # if stackObject in operators:
-            #     # If the current focus node is the root node, then create a parent node relative to the current 
-            #     # focus node, then place this operator token in the node.  The parent’s left link will point to 
-            #     # the node it came from.  Make this operator node the current focus node.
-            #     if self.currNode == self.topNode:
-            #         self.addParent(stackObject)
-            #         self.currNode = self.topNode
-            #         return True
-
-            #     # Otherwise, create a new node containing an operator value.  This node will take the 
-            #     # position in the tree that the current focus node did, and current focus node will become 
-            #     # the left child of this new node.  Make this node containing an operator value the current 
-            #     # focus node. 
-            #     else:
-            #         self.addParent2current(stackObject)
-            #         return True
-            # return False
+           
 
         except:
             self.errorMessage("Exception thrown in poppedOffTheStack(). stackObject=" + stackObject)
@@ -220,6 +178,35 @@ class Tree:
             self.currNode = self.nodePointers[len(self.nodePointers)-1]
         except:
             self.errorMessage("Excpetion thrown in returnCurrNodeFocusToParrent")
+
+    def postOrderTraversal(self, node):
+        try:
+
+            if node.left != None:
+                self.postOrderTraversal(node.left)
+            if node.right != None:
+                self.postOrderTraversal(node.right)
+
+            if node.operator in operators:
+                if node.operator == '+':
+                    val1 = self.traversalStack.pop()
+                    val2 = self.traversalStack.pop()
+                    self.traversalStack.append(val1+val2)
+                if node.operator == '-':
+                    val1 = self.traversalStack.pop()
+                    val2 = self.traversalStack.pop()
+                    self.traversalStack.append(val1-val2)
+                if node.operator == '*':
+                    val1 = self.traversalStack.pop()
+                    val2 = self.traversalStack.pop()
+                    self.traversalStack.append(val1*val2)
+                if node.operator == '/':
+                    val1 = self.traversalStack.pop()
+                    val2 = self.traversalStack.pop()
+                    self.traversalStack.append(val1/val2)
+                
+        except:
+            self.errorMessage("Excpetion thrown in postOrderTraversal()")
 
     def errorMessage(self, message):
         print(Fore.YELLOW + Style.BRIGHT + "Error: " + Style.NORMAL + message + Style.RESET_ALL)

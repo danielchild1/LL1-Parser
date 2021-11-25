@@ -15,29 +15,61 @@ except:
     print(Fore.RED + Back.LIGHTBLACK_EX + Style.BRIGHT + "Error: " + Style.NORMAL + "you are not using python >= 3.9" + Style.RESET_ALL)
     exit(2)
 
-l0 = Production(lSide="Goal", f="Expr")
-l1 = Production(lSide="Expr", f="LTerm", s="ExprP")
-l2 = Production(lSide="LTerm", f="LFactor", s="TermP")
-l3 = Production(lSide="RTerm", f="RFactor", s="TermP")
-l4 = Production(lSide="ExprP", f="+", s="RTerm", t="ExprP")
-l5 = Production(lSide="ExprP", f="-", s="RTerm", t="ExprP")
-l6 = Production(lSide="ExprP", f="ε")
-l7 = Production(lSide="TermP", f="*", s="RFactor", t="TermP")
-l8 = Production(lSide="TermP", f="/", s="RFactor", t="TermP")
-l8p2 = Production(lSide="TermP", f="^", s="RFactor", t="TermP")
-l9 = Production(lSide="TermP", f="ε")
-l10 = Production(lSide='LFactor', f='GFactor')
-l11 = Production(lSide='LFactor', f='negnum') #negative val without space only left term
-l12 = Production(lSide='LFactor', f='negname') #negative name without space only left term
-l13 = Production(lSide='RFactor', f='GFactor')
-l14 = Production(lSide='GFactor', f='(', s="Expr", t=")")
-l15 = Production(lSide='GFactor', f='PosVal')
-l16 = Production(lSide='GFactor', f='SpaceNegVal')
-l17 = Production(lSide="PosVal", f="num")
-l18 = Production(lSide="PosVal", f="name")
-l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
-l20 = Production(lSide="SpaceNegVal", f="spacenegname")
-ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l8p2, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]
+l0 = Production(lSide="Goal", f="LineFull")
+l1 = Production(lSide="LineFull", f="VarType", s="VarTypeAfter")
+l2 = Production(lSide="LineFull", f="LineVarName")
+l3 = Production(lSide="LineFull", f="negnum", s="PowerP", t="MultDivP", o="AddSubP")
+l4 = Production(lSide="LineFull", f="Parens", s="PowerP", t="MultDivP", o="AddSubP")
+l5 = Production(lSide="LineFull", f="return", s="GTerm")
+l6 = Production(lSide="LineFull", f="}")
+l7 = Production(lSide="VarTypeAfter", f="LineVarName")
+l7 = Production(lSide="VarTypeAfter", f="procedure", s="name", t="ProcedureParams")
+l8 = Production(lSide="LineVarName", f="name", s="LineVarNameRemaining")
+l9 = Production(lSide="LineVarNameRemaining", f='=', s='Expr')
+l10 = Production(lSide="LineVarNameRemaining", f='PowerAndRightOp', s='MultDivP', t='AddSubP')
+l11 = Production(lSide="LineVarNameRemaining", f='MultAndRightOp', t='AddSubP')
+l12 = Production(lSide="LineVarNameRemaining", f='DivAndRightOp', t='AddSubP')
+l13 = Production(lSide="LineVarNameRemaining",  t='AddSubP')
+l14 = Production(lSide='ProcedureParams', f='(', s='Params', t=')')
+l15 = Production(lSide='Params', f='VarType', s='name', t='MoreParams')
+l16 = Production(lSide='Params', f='ε')
+l17 = Production(lSide='MoreParams', ff=",", f='VarType', s='name', t='MoreParams')
+l18 = Production(lSide='MoreParams', f='ε')
+l19 = Production(lSide='VarType', f='num')
+l20 = Production(lSide='VarType', f='ish')
+l21 = Production(lSide='Expr', f='LTermAddSub', s='AddSubP')
+l22 = Production(lSide='LTermAddSub', f='LTermMultDiv', s='MultDivP')
+l23 = Production(lSide='LTermMultDiv', f='LTermPower', s='PowerP')
+l24 = Production(lSide='RTermAddSub', f='RTermMultDiv', s='MultDivP')
+l25 = Production(lSide='RTermMultDiv', f='RTermPower', s='PowerP')
+l26 = Production(lSide='AddSubP', ff="+", f='RTermAddSub', s='AddSubP')
+l27 = Production(lSide='AddSubP', ff="-", f='RTermAddSub', s='AddSubP')
+l28 = Production(lSide='AddSubP', f='ε')
+l29 = Production(lSide='MultDivP', f='MultAndRightOp')
+l30 = Production(lSide='MultDivP', f='DivAndRightOp')
+l31 = Production(lSide='MultDivP', f='ε')
+l32 = Production(lSide='MultAndRightOp', ff="*", f='RTermMultDiv', s='MultDivP')
+l33 = Production(lSide='DivAndRightOp', ff="/", f='RTermMultDiv', s='MultDivP')
+l34 = Production(lSide='PowerP', f='PowerAndRightOp')
+l35 = Production(lSide='PowerP', f='ε')
+l36 = Production(lSide='PowerAndRightOp', ff="^", f='RTermPower', s='PowerP')
+l37 = Production(lSide='LTermPower', f='GTerm')
+l38 = Production(lSide='LTermPower', f='negnum_value')
+l39 = Production(lSide='LTermPower', f='negish_value')
+l40 = Production(lSide='LTermPower', f='negname')
+l41 = Production(lSide='RTermPower', f='GTerm')
+l42 = Production(lSide='GTerm', f='Parens')
+l43 = Production(lSide='GTerm', f='PosVal')
+l44 = Production(lSide='GTerm', f='SpaceNegVal')
+l45 = Production(lSide='Parens', f='(', s='Expr', t=')')
+l46 = Production(lSide='PosVal', f='num_value')
+l47 = Production(lSide='PosVal', f='ish_value')
+l48 = Production(lSide='PosVal', f='name')
+l49 = Production(lSide='SpaceNegVal', f='spacenegnum_value')
+l50 = Production(lSide='SpaceNegVal', f='spacenegish_value')
+l51 = Production(lSide='SpaceNegVal', f='spacenegname')
+
+ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20, l21, l22, l23, l24, l25, l26, l27, l28, l29, l30, l31, l32, l33, l34, l35, l36, l37, l38, l39, l40, l41, l42, l43, l44, l45, l46, l47, l48, l49, l50, l51]
 
 
 #FIRST
@@ -70,7 +102,7 @@ while True:
     else:
         Firstlastiteration = First.copy()
 
-
+pprint(First)
 
 #FOLLOW
 Follow = {}
@@ -132,7 +164,7 @@ for A in nonTerminals:
             if 'eof' in firstPlus(p) and parseTable[A, 'eof'] == None:
                 parseTable[A, 'eof'] = i
 
-#pprint(parseTable)
+pprint(parseTable)
 
 
 from tree import Tree
@@ -213,6 +245,15 @@ with open('./tests/valid.txt')as file:
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
         treeList.append(tree)
+
+
+#Post Order Traversal
+#GO LEFT
+#Go RIGHT
+#DO Operand 
+for tree in treeList:
+    tempNode
+
 
 
 exit(0)
