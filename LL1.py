@@ -162,14 +162,14 @@ with open('./tests/valid.txt')as file:
                     if focus == word2Terminal(word):
 
                         #NEW ASSIGNMENT CODE
-                        itemPopedOff = stack.pop()
-                        needRont = tree.poppedOffTheStack(itemPopedOff, word)
-                        if needRont:
-                            tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
-                            if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
-                                tree.integerStack.pop()
-                                tree.returnCurrNodeFocusToParrent()
+                        #itemPopedOff = stack.pop()
+                        tree.poppedOffTheStack(stack.pop(), word, stack)
+                        # if needRont:
+                        #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
+                        # if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
+                        #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
+                        #         tree.integerStack.pop()
+                        #         tree.returnCurrNodeFocusToParrent()
                         #END NEW ASSIGNMENT CODE
                         
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
@@ -183,20 +183,22 @@ with open('./tests/valid.txt')as file:
                     if table != None:
 
                         #NEW ASSIGNMENT CODE
-                        itemPopedOff = stack.pop()
-                        needRont = tree.poppedOffTheStack(itemPopedOff, word)
-                        if needRont:
-                            tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
-                            if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
-                                tree.integerStack.pop()
-                                tree.returnCurrNodeFocusToParrent()
+                        #itemPopedOff = stack.pop()
+                        tree.poppedOffTheStack(stack.pop(), word, stack)
+                        # if needRont:
+                        #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
+                        # if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
+                        #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
+                        #         tree.integerStack.pop()
+                        #         tree.returnCurrNodeFocusToParrent()
                         #END NEW ASSIGNMENT CODE
 
 
                         regergitatedMess = ProList[table].regurgitate()
                         for reger in regergitatedMess:
                             if reger != "ε":
+                                if reger in operators:
+                                    tree.integerStack.append(len(stack)-1)
                                 stack.append(reger)
                     else:
                         raise Exception(" not found in parse table")
