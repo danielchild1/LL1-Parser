@@ -98,21 +98,30 @@ class Tree:
             if self.currNode == self.topNode:
                 self.addParent(operator)
             else:
-                # newNode = Node(self.currNode.operator)
-                # self.currNode.operator = operator
-                # newNode.left = self.currNode.left
-                # self.currNode.left = newNode
-                # self.numNodes += 1
-                # self.nodePointers.append(newNode)
-                parentNode = self.nodePointers[len(self.nodePointers)-1]
-                parentNode.left = Node(operator)
-                parentNode.left.left = self.currNode
-                self.currNode = parentNode.left
-                self.nodePointers.append(self.currNode)
+
+                newNode = Node(operator)
+
+                parentNode = self.nodePointers[len(self.nodePointers)-2]
+                parentNode.right = parentNode.left
+                parentNode.left = newNode
+                newNode.left = self.currNode
+                self.currNode = newNode
                 self.currNode.right = Node()
                 self.currNode = self.currNode.right
-                self.nodePointers.append(self.currNode)
+                
+                self.nodePointers.pop()
+                self.nodePointers.append(parentNode.left)
+                self.nodePointers.append(parentNode.left.right)
                 self.numNodes += 1
+                # oldLeft = parentNode.left
+                # parentNode.left = Node(operator)
+                # parentNode.left.left = oldLeft
+                # self.currNode = parentNode.left
+                # self.nodePointers.append(self.currNode)
+                # self.currNode.right = Node()
+                # self.currNode = self.currNode.right
+                # self.nodePointers.append(self.currNode)
+                # self.numNodes += 1
 
 
         except:
@@ -151,7 +160,7 @@ class Tree:
             if stackObject in nonTerminals:
 
                 if len(self.integerStack) > 0:
-                    if len(wholeStack) == self.integerStack[len(self.integerStack)-1]:
+                    if len(wholeStack)+1 == self.integerStack[len(self.integerStack)-1]:
                         self.returnCurrNodeFocusToParrent()
                         self.integerStack.pop()
             # #If a non-operator terminal (such as a number or a variable name) would be consumed off that stack, one of two options will occur:
