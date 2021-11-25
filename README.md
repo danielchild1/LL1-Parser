@@ -1,7 +1,7 @@
 # LL1-Parser
 
-REPO: https://github.com/danielchild1/LL1-Parser.git
-BRANCH: Intermediate-Representations
+**REPO:** https://github.com/danielchild1/LL1-Parser.git   
+**BRANCH:** Intermediate-Representations   
 
 Video coming once I get home from vacation
 
