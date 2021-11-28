@@ -102,7 +102,7 @@ while True:
     else:
         Firstlastiteration = First.copy()
 
-pprint(First)
+#pprint(First)
 
 #FOLLOW
 Follow = {}
@@ -175,11 +175,13 @@ for A in nonTerminals:
 #     print(outputString)
 #     outputString == ''
 
-exit(0)
+
 from tree import Tree
 treeList = []
+from symboltable import SymbolTable
+symboltable = SymbolTable()
 
-
+print("Valiate lines: ")
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
 with open('./tests/irassignment.txt')as file:
@@ -188,6 +190,7 @@ with open('./tests/irassignment.txt')as file:
         ogLine = line
         lastWordWasANumberVarOrRightparens = False
         tree = Tree()
+        thisvar = ""
         try:
             word = NextWord(line)
             line = line.removeprefix(word)
@@ -209,7 +212,14 @@ with open('./tests/irassignment.txt')as file:
                         line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
+                        if word2Terminal(word) == "name" and thisvar == "":
+                            thisvar = word
+                            tree.varName = word
+                            symboltable.Insert(word, None)
+
                     else:
+                        tree.erroredOut = True
+                        symboltable.remove(thisvar)
                         raise Exception(" looking for symbol at top of stack")
                 else:
                     table = parseTable[focus,word2Terminal(word)]
@@ -227,6 +237,8 @@ with open('./tests/irassignment.txt')as file:
                                     tree.integerStack.append(len(stack)-1)
                                 stack.append(reger)
                     else:
+                        tree.erroredOut = True
+                        symboltable.remove(thisvar)
                         raise Exception(" not found in parse table")
                 nameNumList = ["name", "num", "spacenegname", "spacenegnum", "negname", "negnum", ")"]
                 if word2Terminal(word) in nameNumList:
@@ -235,18 +247,34 @@ with open('./tests/irassignment.txt')as file:
                     lastWordWasANumberVarOrRightparens = False
                 focus = stack[len(stack)-1]
         except Exception as e:
-            print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )
+            if "//" not in ogLine:
+                print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
         treeList.append(tree)
 
 
+print('\n\n Trees printed in post order traversal')
 #Post Order Traversal
 #GO LEFT
 #Go RIGHT
 #DO Operand 
-# for tree in treeList:
-#     tempNode
+for i, tree in enumerate(treeList):
+    try:
+        if tree.erroredOut == False:
+            #print(tree.numNodes)
+            tree.postOrderTraversal(tree.topNode)
+            symboltable.update(tree.varName, tree.traversalStack[0])
+            tree.printTraversal(tree.topNode)
+            #outPut
+            print(tree.varName + " " + tree.stringgg)
+    except:
+        continue
+
+
+print("\n\n variables and their values")
+pprint(symboltable.map)
+
 
 
 

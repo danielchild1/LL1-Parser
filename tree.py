@@ -35,7 +35,9 @@ class Tree:
             self.integerStack = []
             self.topNode = Node(operator)
             self.traversalStack = []
-            self.value = 0
+            self.erroredOut = False
+            self.varName = None
+            self.stringgg = " "
             if operator == None:
                 self.numNodes = -1
             else:
@@ -157,6 +159,7 @@ class Tree:
 
         except:
             self.errorMessage("Exception thrown in poppedOffTheStack(). stackObject=" + stackObject)
+            self.erroredOut = True
     
     def addRONT(self, placeHolder, index):
         '''Next, this code must remember when this RONT’s full usage through the parsing is done, or in 
@@ -191,22 +194,44 @@ class Tree:
                 if node.operator == '+':
                     val1 = self.traversalStack.pop()
                     val2 = self.traversalStack.pop()
-                    self.traversalStack.append(val1+val2)
+                    self.traversalStack.append(str(int(val1)+int(val2)))
                 if node.operator == '-':
                     val1 = self.traversalStack.pop()
                     val2 = self.traversalStack.pop()
-                    self.traversalStack.append(val1-val2)
+                    self.traversalStack.append(str(int(val2)-int(val1)))
                 if node.operator == '*':
                     val1 = self.traversalStack.pop()
                     val2 = self.traversalStack.pop()
-                    self.traversalStack.append(val1*val2)
+                    self.traversalStack.append(str(int(val1)*int(val2)))
                 if node.operator == '/':
                     val1 = self.traversalStack.pop()
+                    if val1 == '0':
+                        raise("devide by zero")
                     val2 = self.traversalStack.pop()
-                    self.traversalStack.append(val1/val2)
+                    self.traversalStack.append(str(int(val2)/int(val1)))
+                if node.operator == '^':
+                    val1 = self.traversalStack.pop()
+                    val2 = self.traversalStack.pop()
+                    self.traversalStack.append(str(int(val2)**int(val1)))
+            
+            else:
+                if node.operator not in ['(', ')']:
+                    self.traversalStack.append(node.operator)
                 
         except:
             self.errorMessage("Excpetion thrown in postOrderTraversal()")
+    
+    def printTraversal(self, node):
+        
+        if node.left != None:
+            self.printTraversal(node.left)
+        if node.right != None:
+            self.printTraversal(node.right)
+
+        if node.operator not in ['(', ')']:
+            self.stringgg += node.operator + ' '
 
     def errorMessage(self, message):
-        print(Fore.YELLOW + Style.BRIGHT + "Error: " + Style.NORMAL + message + Style.RESET_ALL)
+        debug_mode = False
+        if debug_mode:
+            print(Fore.YELLOW + Style.BRIGHT + "Error: " + Style.NORMAL + message + Style.RESET_ALL)

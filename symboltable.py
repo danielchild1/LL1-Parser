@@ -7,8 +7,15 @@ class SymbolTable:
             return self.map[name]
         except:
             return None
-        
     
-    def Insert(self, name, record):
+    def remove(self, name):
+        if name in self.map:
+            self.map.pop(name)
+    
+    def Insert(self, name, record=None):
+        if name not in self.map:
+            self.map[name] = record
+    
+    def update(self, name, record):
         self.map[name] = record
  
