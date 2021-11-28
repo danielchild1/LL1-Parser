@@ -164,16 +164,25 @@ for A in nonTerminals:
             if 'eof' in firstPlus(p) and parseTable[A, 'eof'] == None:
                 parseTable[A, 'eof'] = i
 
-pprint(parseTable)
+
+#pprint(parseTable)
 
 
+# outputString = ''
+# for p in parseTable:
+#     for r in parseTable[p]:
+#         outputString += r
+#     print(outputString)
+#     outputString == ''
+
+exit(0)
 from tree import Tree
 treeList = []
 
 
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
-with open('./tests/valid.txt')as file:
+with open('./tests/irassignment.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
@@ -194,15 +203,7 @@ with open('./tests/valid.txt')as file:
                     if focus == word2Terminal(word):
 
                         #NEW ASSIGNMENT CODE
-                        #itemPopedOff = stack.pop()
                         tree.poppedOffTheStack(stack.pop(), word, stack)
-                        # if needRont:
-                        #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        # if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
-                        #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
-                        #         tree.integerStack.pop()
-                        #         tree.returnCurrNodeFocusToParrent()
-                        #END NEW ASSIGNMENT CODE
                         
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
                         line = line.removeprefix(" ")
@@ -215,15 +216,8 @@ with open('./tests/valid.txt')as file:
                     if table != None:
 
                         #NEW ASSIGNMENT CODE
-                        #itemPopedOff = stack.pop()
                         tree.poppedOffTheStack(stack.pop(), word, stack)
-                        # if needRont:
-                        #     tree.addRONT(stack[len(stack)-1],len(stack)-1)
-                        # if itemPopedOff not in operators and itemPopedOff not in ronts and len(tree.integerStack)>0:
-                        #     if len(stack) == tree.integerStack[len(tree.integerStack)-1]:
-                        #         tree.integerStack.pop()
-                        #         tree.returnCurrNodeFocusToParrent()
-                        #END NEW ASSIGNMENT CODE
+
 
 
                         regergitatedMess = ProList[table].regurgitate()
@@ -251,8 +245,8 @@ with open('./tests/valid.txt')as file:
 #GO LEFT
 #Go RIGHT
 #DO Operand 
-for tree in treeList:
-    tempNode
+# for tree in treeList:
+#     tempNode
 
 
 

@@ -1,6 +1,6 @@
-nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "powerP", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'PowerP']
-terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", '=', 'ε', "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
-nonOperatorTerminals = ["eof", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε", "{", "}", ",", "ish", "result", "procedure"]
+nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'PowerP']
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
+nonOperatorTerminals = ["eof", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
 operators = ["+", "-", "*", "/", "^"]
 # nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
 ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
@@ -19,28 +19,40 @@ ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 
 from os import fwalk
 import re
-regNum = re.compile(r'^[0-9]+.?[0-9]*$')
+regspacenegish_val = re.compile(r'^\s-[0-9]+.[0-9]*$')
+regnegish_val = re.compile(r'^-[0-9]+.[0-9]*$')
+regish_val = re.compile(r'^\s?[0-9]+.[0-9]*$')
+
+regnegnum_value = re.compile(r'^-[0-9]+$')
+regspaecnegnum_value = re.compile(r'^\s-[0-9]+$')
+regnum_value = re.compile(r'^\s?[0-9]+$')
+
 regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
-regspacenegnum = re.compile(r'^\s-[0-9]+.?[0-9]*$')
 regspacenegname = re.compile(r'^\s-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
-regnegnum = re.compile(r'^-[0-9]+.?[0-9]*$')
 regnegname = re.compile(r'^-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
+
 def word2Terminal(oj):
     if oj in terminals:
         return oj
     else:
         if regName.match(oj):
             return "name"
-        if regNum.match(oj):
-            return "num"
+        if regish_val.match(oj):
+            return "ish_value"
         if regspacenegname.match(oj):
             return "spacenegname"
-        if regspacenegnum.match(oj):
-            return "spacenegnum"
+        if regspacenegish_val.match(oj):
+            return "spacenegish_value"
         if regnegname.match(oj):
             return "negname"
-        if regnegnum.match(oj):
-            return "negnum"
+        if regnegish_val.match(oj):
+            return "negish_value"
+        if regnegnum_value.match(oj):
+            return "negnum_value"
+        if regspaecnegnum_value.match(oj):
+            return "spacenegnum_value"
+        if regnum_value.match(oj):
+            return "num_value"
 
 
 
