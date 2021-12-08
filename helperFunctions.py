@@ -1,5 +1,9 @@
-terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", "name", "num", "spacenegnum", 'spacenegname', "negnum", "negname", "ε"]
-nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'PowerP']
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
+nonOperatorTerminals = ["eof", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
+operators = ["+", "-", "*", "/", "^"]
+# nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
+ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 
 # terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
@@ -15,28 +19,40 @@ nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "
 
 from os import fwalk
 import re
-regNum = re.compile(r'^[0-9]+.?[0-9]*$')
+regspacenegish_val = re.compile(r'^\s-[0-9]+.[0-9]*$')
+regnegish_val = re.compile(r'^-[0-9]+.[0-9]*$')
+regish_val = re.compile(r'^\s?[0-9]+.[0-9]*$')
+
+regnegnum_value = re.compile(r'^-[0-9]+$')
+regspaecnegnum_value = re.compile(r'^\s-[0-9]+$')
+regnum_value = re.compile(r'^\s?[0-9]+$')
+
 regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
-regspacenegnum = re.compile(r'^\s-[0-9]+.?[0-9]*$')
 regspacenegname = re.compile(r'^\s-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
-regnegnum = re.compile(r'^-[0-9]+.?[0-9]*$')
 regnegname = re.compile(r'^-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
+
 def word2Terminal(oj):
     if oj in terminals:
         return oj
     else:
         if regName.match(oj):
             return "name"
-        if regNum.match(oj):
-            return "num"
+        if regish_val.match(oj):
+            return "ish_value"
         if regspacenegname.match(oj):
             return "spacenegname"
-        if regspacenegnum.match(oj):
-            return "spacenegnum"
+        if regspacenegish_val.match(oj):
+            return "spacenegish_value"
         if regnegname.match(oj):
             return "negname"
-        if regnegnum.match(oj):
-            return "negnum"
+        if regnegish_val.match(oj):
+            return "negish_value"
+        if regnegnum_value.match(oj):
+            return "negnum_value"
+        if regspaecnegnum_value.match(oj):
+            return "spacenegnum_value"
+        if regnum_value.match(oj):
+            return "num_value"
 
 
 
@@ -153,3 +169,27 @@ def subEpsolon(p):
 # l11 = Production(lSide='Factor', f="num")
 # l12 = Production(lSide='Factor', f="name")
 # ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l9, l10, l11, l12]
+
+# l0 = Production(lSide="Goal", f="Expr")
+# l1 = Production(lSide="Expr", f="LTerm", s="ExprP")
+# l2 = Production(lSide="LTerm", f="LFactor", s="TermP")
+# l3 = Production(lSide="RTerm", f="RFactor", s="TermP")
+# l4 = Production(lSide="ExprP", f="+", s="RTerm", t="ExprP")
+# l5 = Production(lSide="ExprP", f="-", s="RTerm", t="ExprP")
+# l6 = Production(lSide="ExprP", f="ε")
+# l7 = Production(lSide="TermP", f="*", s="RFactor", t="TermP")
+# l8 = Production(lSide="TermP", f="/", s="RFactor", t="TermP")
+# l8p2 = Production(lSide="TermP", f="^", s="RFactor", t="TermP")
+# l9 = Production(lSide="TermP", f="ε")
+# l10 = Production(lSide='LFactor', f='GFactor')
+# l11 = Production(lSide='LFactor', f='negnum') #negative val without space only left term
+# l12 = Production(lSide='LFactor', f='negname') #negative name without space only left term
+# l13 = Production(lSide='RFactor', f='GFactor')
+# l14 = Production(lSide='GFactor', f='(', s="Expr", t=")")
+# l15 = Production(lSide='GFactor', f='PosVal')
+# l16 = Production(lSide='GFactor', f='SpaceNegVal')
+# l17 = Production(lSide="PosVal", f="num")
+# l18 = Production(lSide="PosVal", f="name")
+# l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
+# l20 = Production(lSide="SpaceNegVal", f="spacenegname")
+# ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l8p2, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]
