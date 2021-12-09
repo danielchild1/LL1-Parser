@@ -1,10 +1,9 @@
 # LL1-Parser
 
 **REPO:** https://github.com/danielchild1/LL1-Parser.git   
-**BRANCH:** Intermediate-Representations   
+**BRANCH:** Master ~~Intermediate-Representations   
 
-Video coming once I get home from vacation
-
+I merged branches and the final assignment is in the Output-to-Assembly  branch
 
 **You must run the code with python 3.9 or better**
 
