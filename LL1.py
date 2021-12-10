@@ -7,6 +7,8 @@ from Production import Production
 from helperFunctions import *
 from pprint import pprint
 
+print("Number of Terminals: " + str(len(terminals)))
+print("Number of Terminals with out operators: " + str(len(nonOperatorTerminals)))
 try:
     testString = " 343 343 343 343 "
     testString = testString.removeprefix(" ")
@@ -18,10 +20,16 @@ except:
 l0 = Production(lSide="Goal", f="LineFull")
 l1 = Production(lSide="LineFull", f="VarType", s="VarTypeAfter")
 l2 = Production(lSide="LineFull", f="LineVarName")
+l2a = Production(lSide="LineFull", f="ExprWithoutName")
 l3 = Production(lSide="LineFull", f="negnum", s="PowerP", t="MultDivP", o="AddSubP")
 l4 = Production(lSide="LineFull", f="Parens", s="PowerP", t="MultDivP", o="AddSubP")
 l5 = Production(lSide="LineFull", f="return", s="GTerm")
 l6 = Production(lSide="LineFull", f="}")
+l6a = Production(lSide="LineFull", f="printNum", s="name")
+l6b = Production(lSide="LineFull", f="printIsh", s="name")
+l6c = Production(lSide="LineFull", f="readNum", s="name")
+l6d = Production(lSide="LineFull", f="readIsh", s="name")
+l6e = Production(lSide="LineFull", f="printString", s="sstring")
 l7 = Production(lSide="VarTypeAfter", f="LineVarName")
 l8 = Production(lSide="VarTypeAfter", f="procedure", s="name", t="ProcedureParams", o="{")
 l9 = Production(lSide="LineVarName", f="name", s="LineVarNameRemaining")
@@ -30,6 +38,11 @@ l11 = Production(lSide="LineVarNameRemaining", f='PowerAndRightOp', s='MultDivP'
 l12 = Production(lSide="LineVarNameRemaining", f='MultAndRightOp', s='AddSubP')
 l13 = Production(lSide="LineVarNameRemaining", f='DivAndRightOp', s='AddSubP')
 l14 = Production(lSide="LineVarNameRemaining",  f='AddSubP')
+l14a = Production(lSide="ExprWithoutName", f='num_value', s='PowerP', t='MultDivP', ff='AddSubP')
+l14b = Production(lSide="ExprWithoutName", f='negnum_value', s='PowerP', t='MultDivP', ff='AddSubP')
+l14c = Production(lSide="ExprWithoutName", f='Parens', s='PowerP', t='MultDivP', ff='AddSubP')
+l14d = Production(lSide='Condition', f='Expr', s='==', t='Expr')
+l14e = Production(lSide='Condition', f='Expr', s='!=', t='Expr')
 l15 = Production(lSide='ProcedureParams', f='(', s='Params', t=')')
 l16 = Production(lSide='Params', f='VarType', s='name', t='MoreParams')
 l17 = Production(lSide='Params', f='ε')
@@ -58,18 +71,23 @@ l39 = Production(lSide='LTermPower', f='negnum_value')
 l40 = Production(lSide='LTermPower', f='negish_value')
 l41 = Production(lSide='LTermPower', f='negname')
 l42 = Production(lSide='RTermPower', f='GTerm')
+l42a = Production(lSide='GTerm', f='NameOrProcedure')
 l43 = Production(lSide='GTerm', f='Parens')
-l44 = Production(lSide='GTerm', f='PosVal')
+l44 = Production(lSide='GTerm', f='num_value')
+l48 = Production(lSide='GTerm', f='ish_value')
 l45 = Production(lSide='GTerm', f='SpaceNegVal')
+l45a = Production(lSide='NameOrProcedure', f='name', s='Arguments')
+l45b = Production(lSide='Arguments', f='(', s='Expr', t='MoreArguments', ff=')')
+l45c = Production(lSide='Arguments', f='ε')
+l45d = Production(lSide='MoreArguments', f=',', s='Expr', t='MoreArguments')
+l45e = Production(lSide='MoreArguments', f='ε')
 l46 = Production(lSide='Parens', f='(', s='Expr', t=')')
-l47 = Production(lSide='PosVal', f='num_value')
-l48 = Production(lSide='PosVal', f='ish_value')
 l49 = Production(lSide='PosVal', f='name')
 l50 = Production(lSide='SpaceNegVal', f='spacenegnum_value')
 l51 = Production(lSide='SpaceNegVal', f='spacenegish_value')
 l52 = Production(lSide='SpaceNegVal', f='spacenegname')
 
-ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20, l21, l22, l23, l24, l25, l26, l27, l28, l29, l30, l31, l32, l33, l34, l35, l36, l37, l38, l39, l40, l41, l42, l43, l44, l45, l46, l47, l48, l49, l50, l51, l52]
+ProList = [l0, l1, l2, l2a, l3, l4, l5, l6, l6a, l6b, l6c, l6d, l6e, l7, l8, l9, l10, l11, l12, l13, l14, l14a, l14b, l14c, l14d, l14e, l15, l16, l17, l18, l19, l20, l21, l22, l23, l24, l25, l26, l27, l28, l29, l30, l31, l32, l33, l34, l35, l36, l37, l38, l39, l40, l41, l42, l42a, l43, l44, l45, l45a, l45b, l45c, l45d, l45e, l46, l48, l49, l50, l51, l52]
 
 
 #FIRST
@@ -181,6 +199,11 @@ treeList = []
 from symboltable import SymbolTable
 symboltable = SymbolTable()
 
+symbolTableStack = []
+symbolTableStack.append(symboltable)
+
+functionList = []
+
 print("Valiate lines: ")
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
@@ -188,6 +211,14 @@ with open('./tests/irassignment.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
+
+        if '{' in line:
+            newSymbolTable = SymbolTable()
+            symbolTableStack.append(newSymbolTable)
+        if '}' in line:
+            functionList.append(symbolTableStack.pop())
+
+
         lastWordWasANumberVarOrRightparens = False
         tree = Tree()
         thisvar = ""
@@ -209,17 +240,19 @@ with open('./tests/irassignment.txt')as file:
                         tree.poppedOffTheStack(stack.pop(), word, stack)
                         
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
-                        line = line.removeprefix(" ")
+                        if " " not in word:
+                            line = line.removeprefix(" ")
                         line = line.removeprefix(word)
 
                         if word2Terminal(word) == "name" and thisvar == "":
                             thisvar = word
                             tree.varName = word
-                            symboltable.Insert(word, None)
+                            TOP(symbolTableStack).Insert(word, None)
+                            TOP(symbolTableStack).addTree(word, tree)
 
                     else:
                         tree.erroredOut = True
-                        symboltable.remove(thisvar)
+                        TOP(symbolTableStack).remove(thisvar)
                         raise Exception(" looking for symbol at top of stack")
                 else:
                     table = parseTable[focus,word2Terminal(word)]

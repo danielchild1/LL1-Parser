@@ -1,6 +1,6 @@
-nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'PowerP']
-terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
-nonOperatorTerminals = ["eof", "(", ")", '=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "result", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return']
+nonTerminals = ["Goal", "LineFull", "VarTypeAfter", "LineVarName", "LineVarNameRemaining", "ProcedureParams", "Params", "MoreParams", "VarType", "Expr", "LTermAddSub", "LTermMultDiv", "RTermAddSub", "RTermMultDiv", "AddSubP", "MultDivP", "MultAndRightOp", "DivAndRightOp", "PowerAndRightOp", "LTermPower", "RTermPower", "GTerm", "Parens", "PosVal", "SpaceNegVal", 'PowerP', 'ExprWithoutName', 'Condition', 'NameOrProcedure', 'Arguments', 'MoreArguments']
+terminals = ["eof", "+", "-", "*", "/", "^", "(", ")", '=', '==', '!=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return', 'printNum', 'printIsh', 'readNum', 'readIsh', 'printString', 'sstring']
+nonOperatorTerminals = ["eof", "(", ")", '=', '==', '!=', 'ε', "name", "num", 'spacenegname', "negnum", "negname", "{", "}", ",", "ish", "procedure", 'negnum_value', 'negish_value', 'num_value', 'ish_value', 'spacenegnum_value', 'spacenegish_value', 'return', 'printNum', 'printIsh', 'readNum', 'readIsh', 'printString', 'sstring']
 operators = ["+", "-", "*", "/", "^"]
 # nonTerminals = ['Goal', "Expr", "LTerm", "RTerm", "ExprP", "TermP", "LFactor", "RFactor", "GFactor", "PosVal", "SpaceNegVal"]
 ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
@@ -8,16 +8,6 @@ ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 # terminals = ['eof', '+', '-', '*', '/', "(", ")", "name", "num", "ε"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
 
-# parseTable = {'Goal': {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 0, ')': None, 'name': 0, 'num':0 },
-#     'Expr':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 1, ')': None, 'name': 1, 'num':1 },
-#     'ExprP':          {'eof': 4,    '+': 2   , '-': 3   , '*': None, '/': None, '(': None,')': 4, 'name': None, 'num':None},
-#     'Term':           {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 5, ')': None, 'name': 5, 'num':5 },
-#     'TermP':          {'eof': 8, '+': 8, '-': 8, '*': 6, '/': 7, '(': None, ')': 8, 'name': None, 'num': None },
-#     'Factor':         {'eof': None, '+': None, '-': None, '*': None, '/': None, '(': 9, ')': None, 'name': 11, 'num':10 }
-# }
-
-
-from os import fwalk
 import re
 regspacenegish_val = re.compile(r'^\s-[0-9]+.[0-9]*$')
 regnegish_val = re.compile(r'^-[0-9]+.[0-9]*$')
@@ -55,17 +45,36 @@ def word2Terminal(oj):
             return "num_value"
 
 
+def nextwordisastring(line):
+    retrunString = ''
+    openQuoteFound = False
+    for l in line:
+        if openQuoteFound and l != '"':
+            retrunString += l
+        elif openQuoteFound and l == '"':
+            retrunString += '"'
+            return retrunString
+        elif openQuoteFound == False and l == '"':
+            retrunString += l
+            openQuoteFound = True
+    return '"Oops somehow the nextwordisastring() function didnt work"'
+
+
 
 def NextWord(line, lastWordWasANumberVarOrRightparens=False):
     charList = ["+", "-", "*", "/", "(", ")", "^"]
     word = ""
     numNonSpaceChars = 0
     numSpaceChars = 0
+    isString = False
 
     if len(line) > 0:
         #for c, cf in zip(line, line[1:]+[None]):
         for i, c in enumerate(line):
             cf = None
+
+            if c == '"':
+                return nextwordisastring(line)
             if len(line) > (i+1):
                 cf = line[i+1]
             if c in charList:
@@ -131,7 +140,6 @@ def onion(first, second):
         if second != None and second not in ret:
             ret.append(second)
 
-
     # if len(ret) == 0:
     #     return None
     # elif len(ret) ==1:
@@ -139,6 +147,8 @@ def onion(first, second):
 
     return ret
 
+def TOP(list):
+    return list[len(list)-1]
 
 def subEpsolon(p):
     if isinstance(p, list):
@@ -154,42 +164,7 @@ def subEpsolon(p):
         return p
 
 
+if __name__ =="__main__":
+    print(NextWord('    "lets go get tacos"', False))
 
-# l0 = Production(lSide="Goal", f="Expr")
-# l1 = Production(lSide="Expr", f="Term", s="ExprP")
-# l2 = Production(lSide="ExprP", f="+", s="Term", t="ExprP")
-# l3 = Production(lSide="ExprP", f="-", s="Term", t="ExprP")
-# l4 = Production(lSide='ExprP', f="ε")
-# l5 = Production(lSide='Term', f="Factor", s="TermP")
-# l6 = Production(lSide='TermP', f="*", s="Factor", t="TermP")
-# l7 = Production(lSide="TermP", f="/", s="Factor", t="TermP")
-# # l8 = Production(lSide="TermP", f="^", s="Factor", t="TermP")
-# l9 = Production(lSide='TermP', f="ε")
-# l10 = Production(lSide='Factor', f="(", s="Expr", t=")")
-# l11 = Production(lSide='Factor', f="num")
-# l12 = Production(lSide='Factor', f="name")
-# ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l9, l10, l11, l12]
 
-# l0 = Production(lSide="Goal", f="Expr")
-# l1 = Production(lSide="Expr", f="LTerm", s="ExprP")
-# l2 = Production(lSide="LTerm", f="LFactor", s="TermP")
-# l3 = Production(lSide="RTerm", f="RFactor", s="TermP")
-# l4 = Production(lSide="ExprP", f="+", s="RTerm", t="ExprP")
-# l5 = Production(lSide="ExprP", f="-", s="RTerm", t="ExprP")
-# l6 = Production(lSide="ExprP", f="ε")
-# l7 = Production(lSide="TermP", f="*", s="RFactor", t="TermP")
-# l8 = Production(lSide="TermP", f="/", s="RFactor", t="TermP")
-# l8p2 = Production(lSide="TermP", f="^", s="RFactor", t="TermP")
-# l9 = Production(lSide="TermP", f="ε")
-# l10 = Production(lSide='LFactor', f='GFactor')
-# l11 = Production(lSide='LFactor', f='negnum') #negative val without space only left term
-# l12 = Production(lSide='LFactor', f='negname') #negative name without space only left term
-# l13 = Production(lSide='RFactor', f='GFactor')
-# l14 = Production(lSide='GFactor', f='(', s="Expr", t=")")
-# l15 = Production(lSide='GFactor', f='PosVal')
-# l16 = Production(lSide='GFactor', f='SpaceNegVal')
-# l17 = Production(lSide="PosVal", f="num")
-# l18 = Production(lSide="PosVal", f="name")
-# l19 = Production(lSide="SpaceNegVal", f="spacenegnum")
-# l20 = Production(lSide="SpaceNegVal", f="spacenegname")
-# ProList = [l0, l1, l2, l3, l4, l5, l6, l7, l8, l8p2, l9, l10, l11, l12, l13, l14, l15, l16, l17, l18, l19, l20]

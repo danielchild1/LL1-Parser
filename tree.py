@@ -191,27 +191,19 @@ class Tree:
                 self.postOrderTraversal(node.right)
 
             if node.operator in operators:
+                val1 = self.traversalStack.pop()
+                val2 = self.traversalStack.pop()
                 if node.operator == '+':
-                    val1 = self.traversalStack.pop()
-                    val2 = self.traversalStack.pop()
                     self.traversalStack.append(str(int(val1)+int(val2)))
                 if node.operator == '-':
-                    val1 = self.traversalStack.pop()
-                    val2 = self.traversalStack.pop()
                     self.traversalStack.append(str(int(val2)-int(val1)))
                 if node.operator == '*':
-                    val1 = self.traversalStack.pop()
-                    val2 = self.traversalStack.pop()
                     self.traversalStack.append(str(int(val1)*int(val2)))
                 if node.operator == '/':
-                    val1 = self.traversalStack.pop()
                     if val1 == '0':
                         raise("devide by zero")
-                    val2 = self.traversalStack.pop()
                     self.traversalStack.append(str(int(val2)/int(val1)))
                 if node.operator == '^':
-                    val1 = self.traversalStack.pop()
-                    val2 = self.traversalStack.pop()
                     self.traversalStack.append(str(int(val2)**int(val1)))
             
             else:

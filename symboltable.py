@@ -1,6 +1,8 @@
 class SymbolTable:
     def __init__(self):
         self.map = {}
+        self.treeMap = {}
+        self.funcName = None
     
     def Lookup(self, name):
         try:
@@ -18,4 +20,7 @@ class SymbolTable:
     
     def update(self, name, record):
         self.map[name] = record
+    
+    def addTree(self, name, tree):
+        self.treeMap[name] = tree
  
