@@ -9,6 +9,7 @@ ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
 
 import re
+import sys
 regspacenegish_val = re.compile(r'^\s-[0-9]+.[0-9]*$')
 regnegish_val = re.compile(r'^-[0-9]+.[0-9]*$')
 regish_val = re.compile(r'^\s?[0-9]+.[0-9]*$')
@@ -166,5 +167,6 @@ def subEpsolon(p):
 
 if __name__ =="__main__":
     print(NextWord('    "lets go get tacos"', False))
+    print(sys.version_info)
 
 

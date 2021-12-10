@@ -17,6 +17,8 @@ class SymbolTable:
     def Insert(self, name, record=None):
         if name not in self.map:
             self.map[name] = record
+        else:
+            raise Exception('var "' + name + '" already defined')
     
     def update(self, name, record):
         self.map[name] = record

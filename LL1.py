@@ -6,13 +6,10 @@ from colorama import Fore, Back, Style
 from Production import Production
 from helperFunctions import *
 from pprint import pprint
+import sys
 
-print("Number of Terminals: " + str(len(terminals)))
-print("Number of Terminals with out operators: " + str(len(nonOperatorTerminals)))
 try:
-    testString = " 343 343 343 343 "
-    testString = testString.removeprefix(" ")
-    testString = testString.removesuffix("343 ")
+    assert(sys.version_info[0] == 3 and sys.version_info[1] >= 9)
 except:
     print(Fore.RED + Back.LIGHTBLACK_EX + Style.BRIGHT + "Error: " + Style.NORMAL + "you are not using python >= 3.9" + Style.RESET_ALL)
     exit(2)
@@ -192,7 +189,11 @@ for A in nonTerminals:
 #         outputString += r
 #     print(outputString)
 #     outputString == ''
-
+from scope import Scope
+scopeStack = [] 
+scopeStack.append(Scope())
+# TODO: redesign the LL1 to use this new object
+TOP(scopeStack).addTree()
 
 from tree import Tree
 treeList = []
@@ -207,7 +208,7 @@ functionList = []
 print("Valiate lines: ")
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
-with open('./tests/irassignment.txt')as file:
+with open('./tests/finalFile.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
@@ -282,6 +283,8 @@ with open('./tests/irassignment.txt')as file:
         except Exception as e:
             if "//" not in ogLine:
                 print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )
+            else:
+                print(Fore.LIGHTWHITE_EX + Back.Black + ogLine + Style.RESET_ALL)
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
         treeList.append(tree)
