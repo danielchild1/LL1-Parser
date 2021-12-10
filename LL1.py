@@ -199,6 +199,11 @@ treeList = []
 from symboltable import SymbolTable
 symboltable = SymbolTable()
 
+symbolTableStack = []
+symbolTableStack.append(symboltable)
+
+functionList = []
+
 print("Valiate lines: ")
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
@@ -206,6 +211,14 @@ with open('./tests/irassignment.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
+
+        if '{' in line:
+            newSymbolTable = SymbolTable()
+            symbolTableStack.append(newSymbolTable)
+        if '}' in line:
+            functionList.append(symbolTableStack.pop())
+
+
         lastWordWasANumberVarOrRightparens = False
         tree = Tree()
         thisvar = ""
@@ -234,11 +247,12 @@ with open('./tests/irassignment.txt')as file:
                         if word2Terminal(word) == "name" and thisvar == "":
                             thisvar = word
                             tree.varName = word
-                            symboltable.Insert(word, None)
+                            TOP(symbolTableStack).Insert(word, None)
+                            TOP(symbolTableStack).addTree(word, tree)
 
                     else:
                         tree.erroredOut = True
-                        symboltable.remove(thisvar)
+                        TOP(symbolTableStack).remove(thisvar)
                         raise Exception(" looking for symbol at top of stack")
                 else:
                     table = parseTable[focus,word2Terminal(word)]
