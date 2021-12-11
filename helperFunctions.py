@@ -67,7 +67,7 @@ def nextwordisastring(line):
 
 
 def NextWord(line, lastWordWasANumberVarOrRightparens=False):
-    charList = ["+", "-", "*", "/", "(", ")", "^"]
+    charList = ["+", "-", "*", "/", "(", ")", "^", ',']
     word = ""
     numNonSpaceChars = 0
     numSpaceChars = 0
@@ -77,6 +77,9 @@ def NextWord(line, lastWordWasANumberVarOrRightparens=False):
         #for c, cf in zip(line, line[1:]+[None]):
         for i, c in enumerate(line):
             cf = None
+
+            if c == ',' and numNonSpaceChars > 0:
+                break
 
             if c == '"':
                 return nextwordisastring(line)

@@ -248,16 +248,21 @@ with open('./tests/finalFile.txt')as file:
                             line = line.removeprefix(" ")
                         line = line.removeprefix(word)
                         
-                        commands = ['printString', 'printNum', 'printIsh', 'readNum']
-                        [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and ogLine not in TOP(scopestack).cammands]
                         # if ['printString', 'printNum', 'printIsh', 'readNum'] in ogLine and happenedOnce == False:
                         #     TOP(scopestack).cammands.append(ogLine)
                         #     happenedOnce = True
+                        commands = ['printString', 'printNum', 'printIsh', 'readNum', 'return']
+                        [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and ogLine not in TOP(scopestack).cammands]
+
+
                         if word2Terminal(word) == "name" and thisvar == "" and 'print' not in ogLine and 'read' not in ogLine:
-                            thisvar = word
-                            tree.varName = word
-                            TOP(scopestack).symbolTable.Insert(word, None)
-                            TOP(scopestack).symbolTable.addTree(word, tree)
+                            if 'procedure' in ogLine:
+                                TOP(scopestack).setProcedureName(word)
+                            elif 'return' not in ogLine:
+                                thisvar = word
+                                tree.varName = word
+                                TOP(scopestack).symbolTable.Insert(word, None)
+                                TOP(scopestack).symbolTable.addTree(word, tree)
 
                     else:
                         tree.erroredOut = True
