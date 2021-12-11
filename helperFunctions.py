@@ -9,6 +9,7 @@ ronts = ["RTermAddSub", "RTermMulTDiv", "RTermPower"]
 # nonTerminals = ['Goal', 'Expr', 'ExprP', 'Term', "TermP", "Factor"]
 
 import re
+import sys
 regspacenegish_val = re.compile(r'^\s-[0-9]+.[0-9]*$')
 regnegish_val = re.compile(r'^-[0-9]+.[0-9]*$')
 regish_val = re.compile(r'^\s?[0-9]+.[0-9]*$')
@@ -20,6 +21,8 @@ regnum_value = re.compile(r'^\s?[0-9]+$')
 regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 regspacenegname = re.compile(r'^\s-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 regnegname = re.compile(r'^-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
+
+regSTRING = re.compile(r'^\".*\"$')
 
 def word2Terminal(oj):
     if oj in terminals:
@@ -43,6 +46,8 @@ def word2Terminal(oj):
             return "spacenegnum_value"
         if regnum_value.match(oj):
             return "num_value"
+        if regSTRING.match(oj):
+            return "sstring"
 
 
 def nextwordisastring(line):
@@ -62,7 +67,7 @@ def nextwordisastring(line):
 
 
 def NextWord(line, lastWordWasANumberVarOrRightparens=False):
-    charList = ["+", "-", "*", "/", "(", ")", "^"]
+    charList = ["+", "-", "*", "/", "(", ")", "^", ',']
     word = ""
     numNonSpaceChars = 0
     numSpaceChars = 0
@@ -72,6 +77,9 @@ def NextWord(line, lastWordWasANumberVarOrRightparens=False):
         #for c, cf in zip(line, line[1:]+[None]):
         for i, c in enumerate(line):
             cf = None
+
+            if c == ',' and numNonSpaceChars > 0:
+                break
 
             if c == '"':
                 return nextwordisastring(line)
@@ -166,5 +174,8 @@ def subEpsolon(p):
 
 if __name__ =="__main__":
     print(NextWord('    "lets go get tacos"', False))
+    print(sys.version_info)
+    print(word2Terminal('printNum'))
+    assert(sys.version_info[0] == 3 and sys.version_info[1] >= 9)
 
 
