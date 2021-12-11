@@ -1,11 +1,11 @@
 import tree
-import symboltable
+from symboltable import SymbolTable
 
 class Scope:
     def __init__(self):
         self.cammands = []
         self.trees = []
-        self.symbolTable = None
+        self.symbolTable = SymbolTable()
     
     def addSTable(self, sysTbl):
         self.symbolTable = sysTbl
@@ -15,3 +15,6 @@ class Scope:
     
     def addTree(self, tree):
         self.trees.append(tree)
+    
+    def rmST(self, st):
+        self.symbolTable.remove(st)

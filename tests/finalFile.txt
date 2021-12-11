@@ -184,7 +184,7 @@ printString "Result of multiplying third and fourth user inputs: "
 num userResult6 = mult(user3, user4)
 printNum userResult6
 // Put it all together
-num procedure computeApproxSphereVolume(num radius)
+num procedure computeApproxSphereVolume(num radius){
 num result = radius ^ 3 * 4 * 31416 / 10000 / 3
 return result
 }

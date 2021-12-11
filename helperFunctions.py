@@ -22,6 +22,8 @@ regName = re.compile(r'^[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 regspacenegname = re.compile(r'^\s-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 regnegname = re.compile(r'^-[a-z|A-Z]+[a-z|A-Z|0-9|_]*$')
 
+regSTRING = re.compile(r'^\".*\"$')
+
 def word2Terminal(oj):
     if oj in terminals:
         return oj
@@ -44,6 +46,8 @@ def word2Terminal(oj):
             return "spacenegnum_value"
         if regnum_value.match(oj):
             return "num_value"
+        if regSTRING.match(oj):
+            return "sstring"
 
 
 def nextwordisastring(line):
@@ -168,5 +172,7 @@ def subEpsolon(p):
 if __name__ =="__main__":
     print(NextWord('    "lets go get tacos"', False))
     print(sys.version_info)
+    print(word2Terminal('printNum'))
+    assert(sys.version_info[0] == 3 and sys.version_info[1] >= 9)
 
 

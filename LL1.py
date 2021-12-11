@@ -189,21 +189,21 @@ for A in nonTerminals:
 #         outputString += r
 #     print(outputString)
 #     outputString == ''
-from scope import Scope
-scopeStack = [] 
-scopeStack.append(Scope())
-# TODO: redesign the LL1 to use this new object
-TOP(scopeStack).addTree()
-
 from tree import Tree
-treeList = []
 from symboltable import SymbolTable
-symboltable = SymbolTable()
+from scope import Scope
+# treeList = []
 
-symbolTableStack = []
-symbolTableStack.append(symboltable)
+# symboltable = SymbolTable()
+
+# symbolTableStack = []
+# symbolTableStack.append(symboltable)
 
 functionList = []
+scopestack = []
+scopestack.append(Scope())
+TOP(scopestack).addSTable(SymbolTable())
+
 
 print("Valiate lines: ")
 #simple binary tree LL1 parser
@@ -212,12 +212,15 @@ with open('./tests/finalFile.txt')as file:
     for line in file:
         line = line.strip()
         ogLine = line
+        happenedOnce = False
 
         if '{' in line:
-            newSymbolTable = SymbolTable()
-            symbolTableStack.append(newSymbolTable)
+            # newSymbolTable = SymbolTable()
+            # symbolTableStack.append(newSymbolTable)
+            newScope = Scope()
+            scopestack.append(newScope)
         if '}' in line:
-            functionList.append(symbolTableStack.pop())
+            functionList.append(scopestack.pop())
 
 
         lastWordWasANumberVarOrRightparens = False
@@ -241,19 +244,24 @@ with open('./tests/finalFile.txt')as file:
                         tree.poppedOffTheStack(stack.pop(), word, stack)
                         
                         word = NextWord(line, lastWordWasANumberVarOrRightparens)
-                        if " " not in word:
+                        if " " not in word or focus == 'printString':
                             line = line.removeprefix(" ")
                         line = line.removeprefix(word)
-
-                        if word2Terminal(word) == "name" and thisvar == "":
+                        
+                        commands = ['printString', 'printNum', 'printIsh', 'readNum']
+                        [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and ogLine not in TOP(scopestack).cammands]
+                        # if ['printString', 'printNum', 'printIsh', 'readNum'] in ogLine and happenedOnce == False:
+                        #     TOP(scopestack).cammands.append(ogLine)
+                        #     happenedOnce = True
+                        if word2Terminal(word) == "name" and thisvar == "" and 'print' not in ogLine and 'read' not in ogLine:
                             thisvar = word
                             tree.varName = word
-                            TOP(symbolTableStack).Insert(word, None)
-                            TOP(symbolTableStack).addTree(word, tree)
+                            TOP(scopestack).symbolTable.Insert(word, None)
+                            TOP(scopestack).symbolTable.addTree(word, tree)
 
                     else:
                         tree.erroredOut = True
-                        TOP(symbolTableStack).remove(thisvar)
+                        TOP(scopestack).symbolTable.remove(thisvar)
                         raise Exception(" looking for symbol at top of stack")
                 else:
                     table = parseTable[focus,word2Terminal(word)]
@@ -272,7 +280,7 @@ with open('./tests/finalFile.txt')as file:
                                 stack.append(reger)
                     else:
                         tree.erroredOut = True
-                        symboltable.remove(thisvar)
+                        TOP(scopestack).rmST(thisvar) #symboltable.remove(thisvar)
                         raise Exception(" not found in parse table")
                 nameNumList = ["name", "num", "spacenegname", "spacenegnum", "negname", "negnum", ")"]
                 if word2Terminal(word) in nameNumList:
@@ -284,10 +292,10 @@ with open('./tests/finalFile.txt')as file:
             if "//" not in ogLine:
                 print(Fore.RED + Back.BLACK+ Style.BRIGHT + "Error:" + Style.NORMAL + " command: " + ogLine +Style.RESET_ALL )
             else:
-                print(Fore.LIGHTWHITE_EX + Back.Black + ogLine + Style.RESET_ALL)
+                print(Fore.LIGHTWHITE_EX  + ogLine + Style.RESET_ALL)
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
-        treeList.append(tree)
+        TOP(scopestack).addTree(tree)
 
 
 print('\n\n Trees printed in post order traversal')
@@ -295,21 +303,31 @@ print('\n\n Trees printed in post order traversal')
 #GO LEFT
 #Go RIGHT
 #DO Operand 
-for i, tree in enumerate(treeList):
-    try:
-        if tree.erroredOut == False:
-            #print(tree.numNodes)
-            tree.postOrderTraversal(tree.topNode)
-            symboltable.update(tree.varName, tree.traversalStack[0])
-            tree.printTraversal(tree.topNode)
-            #outPut
-            print(tree.varName + " " + tree.stringgg)
-    except:
-        continue
+# for treeList in TOP(scopestack).symbolTable.treeMap:
+#     for i, tree in enumerate(treeList):
+#         try:
+#             if tree.erroredOut == False:
+#                 #print(tree.numNodes)
+#                 tree.postOrderTraversal(tree.topNode)
+#                 symboltable.update(tree.varName, tree.traversalStack[0])
+#                 tree.printTraversal(tree.topNode)
+#                 #outPut
+#                 print(tree.varName + " " + tree.stringgg)
+#         except:
+#             continue
 
+tempTreeList = []
+for tree in TOP(scopestack).symbolTable.treeMap:
+    tempTreeList.append(TOP(scopestack).symbolTable.treeMap[tree])
+
+for scope in functionList:
+    for tree in scope.symbolTable.treeMap:
+        tempTreeList.append(scope.symbolTable.treeMap[tree])
+
+#pprint(tempTreeList)
 
 print("\n\n variables and their values")
-pprint(symboltable.map)
+#pprint(symboltable.map)
 
 
 

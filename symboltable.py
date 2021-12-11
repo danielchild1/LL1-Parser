@@ -13,6 +13,8 @@ class SymbolTable:
     def remove(self, name):
         if name in self.map:
             self.map.pop(name)
+        if name in self.treeMap:
+            self.map.pop(name)
     
     def Insert(self, name, record=None):
         if name not in self.map:
