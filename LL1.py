@@ -303,23 +303,7 @@ with open('./tests/finalFile.txt')as file:
         TOP(scopestack).addTree(tree)
 
 
-print('\n\n Trees printed in post order traversal')
-#Post Order Traversal
-#GO LEFT
-#Go RIGHT
-#DO Operand 
-# for treeList in TOP(scopestack).symbolTable.treeMap:
-#     for i, tree in enumerate(treeList):
-#         try:
-#             if tree.erroredOut == False:
-#                 #print(tree.numNodes)
-#                 tree.postOrderTraversal(tree.topNode)
-#                 symboltable.update(tree.varName, tree.traversalStack[0])
-#                 tree.printTraversal(tree.topNode)
-#                 #outPut
-#                 print(tree.varName + " " + tree.stringgg)
-#         except:
-#             continue
+
 
 tempTreeList = []
 for tree in TOP(scopestack).symbolTable.treeMap:
@@ -329,14 +313,15 @@ for scope in functionList:
     for tree in scope.symbolTable.treeMap:
         tempTreeList.append(scope.symbolTable.treeMap[tree])
 
-#pprint(tempTreeList)
 
-print("\n\n variables and their values")
-#pprint(symboltable.map)
+[scopestack.append(x) for x in functionList]
 
 
+# outFile = open("./output/codeout.asm", 'w')
+
+# writeOutput = []
+# for line in writeOutput:
+#     outFile.write(line + '\n')
 
 
 exit(0)
-
-
