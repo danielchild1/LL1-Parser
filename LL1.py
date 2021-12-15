@@ -317,6 +317,14 @@ for scope in functionList:
 [scopestack.append(x) for x in functionList]
 
 
+errorVars = []
+for scope in scopestack:
+    for var in scope.symbolTable.map:
+        try:
+            scope.symbolTable.treeMap[var].postOrderTraversal(scope.symbolTable.treeMap[var].topNode)
+            scope.symbolTable.map[var] = scope.symbolTable.treeMap[var].traversalStack[0]
+        except:
+            errorVars.append(var)
 # outFile = open("./output/codeout.asm", 'w')
 
 # writeOutput = []
