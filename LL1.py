@@ -325,9 +325,20 @@ for scope in scopestack:
             scope.symbolTable.map[var] = scope.symbolTable.treeMap[var].traversalStack[0]
         except:
             errorVars.append(var)
-# outFile = open("./output/codeout.asm", 'w')
 
-# writeOutput = []
+
+writeOutput = []
+#build .data section
+
+
+
+#build .text section
+writeOutput.append('SECTION .text')
+writeOutput.append('extern printf')
+writeOutput.append('global main')
+writeOutput.append('SECTION ')
+
+# outFile = open("./output/codeout.asm", 'w')
 # for line in writeOutput:
 #     outFile.write(line + '\n')
 
