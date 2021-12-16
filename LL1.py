@@ -333,10 +333,6 @@ writeOutput = []
 
 
 #build .text section
-writeOutput.append('SECTION .text')
-writeOutput.append('extern printf')
-writeOutput.append('global main')
-writeOutput.append('SECTION ')
 
 # outFile = open("./output/codeout.asm", 'w')
 # for line in writeOutput:

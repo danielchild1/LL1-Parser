@@ -136,7 +136,7 @@ class Tree:
                         self.currNode = self.topNode
                         self.nodePointers = [self.topNode]
 
-                    else:
+                    elif word != ')':
                         self.currNode.operator = word
 
                 elif stackObject in operators:
