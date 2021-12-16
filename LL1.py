@@ -7,6 +7,7 @@ from Production import Production
 from helperFunctions import *
 from pprint import pprint
 import sys
+from assemblyCommands import *
 
 try:
     assert(sys.version_info[0] == 3 and sys.version_info[1] >= 9)
@@ -304,19 +305,20 @@ with open('./tests/finalFile.txt')as file:
 
 
 
+# #generate a list of trees
+# tempTreeList = []
+# for tree in TOP(scopestack).symbolTable.treeMap:
+#     tempTreeList.append(TOP(scopestack).symbolTable.treeMap[tree])
 
-tempTreeList = []
-for tree in TOP(scopestack).symbolTable.treeMap:
-    tempTreeList.append(TOP(scopestack).symbolTable.treeMap[tree])
+# for scope in functionList:
+#     for tree in scope.symbolTable.treeMap:
+#         tempTreeList.append(scope.symbolTable.treeMap[tree])
 
-for scope in functionList:
-    for tree in scope.symbolTable.treeMap:
-        tempTreeList.append(scope.symbolTable.treeMap[tree])
-
-
+ 
 [scopestack.append(x) for x in functionList]
 
-
+#calculating vars we might already know
+#"optomizing"
 errorVars = []
 for scope in scopestack:
     for var in scope.symbolTable.map:
@@ -326,17 +328,23 @@ for scope in scopestack:
         except:
             errorVars.append(var)
 
+#adding our optimized vars into data section
+for var in scopestack[0].symbolTable.map:
+    if scopestack[0].symbolTable.map[var] != None:
+        try:
+            sanatized = str(int(float(scopestack[0].symbolTable.map[var])))
+            add2DataSection(var + " db " + sanatized)
+        except:
+            continue
 
-writeOutput = []
-#build .data section
+outList = []
+addDataSection(outList)
+addBssSection(outList)
+addTextSection(outList)
 
-
-
-#build .text section
-
-# outFile = open("./output/codeout.asm", 'w')
-# for line in writeOutput:
-#     outFile.write(line + '\n')
-
+outFile = open("./codeout.asm", 'w')
+for line in outList:
+    outFile.write(line + '\n')
+outFile.close()
 
 exit(0)

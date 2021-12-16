@@ -193,18 +193,21 @@ class Tree:
             if node.operator in operators:
                 val1 = self.traversalStack.pop()
                 val2 = self.traversalStack.pop()
+
+                val1 = int(float(val1))
+                val2 = int(float(val2)) 
                 if node.operator == '+':
-                    self.traversalStack.append(str(int(val1)+int(val2)))
+                    self.traversalStack.append(str(val1+val2))
                 if node.operator == '-':
-                    self.traversalStack.append(str(int(val2)-int(val1)))
+                    self.traversalStack.append(str(val2-val1))
                 if node.operator == '*':
-                    self.traversalStack.append(str(int(val1)*int(val2)))
+                    self.traversalStack.append(str(val1*val2))
                 if node.operator == '/':
-                    if val1 == '0':
-                        raise("devide by zero")
-                    self.traversalStack.append(str(int(val2)/int(val1)))
+                    if val1 == 0:
+                        raise("divide by zero")
+                    self.traversalStack.append(str(val2/val1))
                 if node.operator == '^':
-                    self.traversalStack.append(str(int(val2)**int(val1)))
+                    self.traversalStack.append(str(val2**val1))
             
             else:
                 if node.operator not in ['(', ')']:
