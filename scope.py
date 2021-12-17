@@ -25,3 +25,5 @@ class Scope:
         if self.procedureName == None:
             self.procedureName = name
             self.symbolTable.funcName = name
+        else:
+            self.arguments.append(name)

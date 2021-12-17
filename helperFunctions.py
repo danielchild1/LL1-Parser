@@ -158,6 +158,13 @@ def onion(first, second):
 def TOP(list):
     return list[len(list)-1]
 
+def is_number(num):
+    try:
+        float(num)
+        return True
+    except:
+        return False
+
 def subEpsolon(p):
     if isinstance(p, list):
         newList = []

@@ -33,16 +33,14 @@ def addTextSection(list):
 
 
 def printFloat(list, floatName):
-    list.append(';print float')
-    list.append('lea rdi, [fmtfloat]')
+    list.append('lea rdi, [fmtfloat]' + ' ;print float')
     list.append('movss xmm0, ' + floatName)
     list.append('cvtss2sd xmm0, xmm0')
     list.append('mov rax, 1')
 
 
 def printString(list, stringName):
-    list.append(';print string: ' + stringName)
-    list.append('mov rsi, ' + stringName)
+    list.append('mov rsi, ' + stringName + ';print string: ' + stringName)
     list.append('mov rdi, [fmtstr]')
     list.append('mov rax, 0')
     list.append('call printf')
@@ -51,21 +49,19 @@ def printString(list, stringName):
 def printUInt(list, intval):
     '''intval must be a string of a number'''
     list.append(';print uint: ' + intval)
-    list.append('mov rsi, ' + intval)
+    list.append('mov rsi, [' + intval + ']')
     list.append('mov rdi, [fmtuint]')
     list.append('mov rax, 0')
     list.append('call printf')
 
 def readInt(list, intvar):
-    list.append(';read int ' + intvar)
-    list.append('lea rdi, [fmtuintin]')
+    list.append('lea rdi, [fmtuintin]' + ' ;read int ' + intvar)
     list.append('lea rsi, ['+intvar+']')
     list.append('xor rax, rax')
     list.append('call scanf')
 
 def printInt(list, intVar):
-    list.append(';print int var ' + intVar)
-    list.append('lea rdi, [fmtuint]')
+    list.append('lea rdi, [fmtuint]' + ' ;print int var ' + intVar)
     list.append('mov rsi, ['+intVar+']')
     list.append('xor rax, rax')
     list.append('call printf')
@@ -90,7 +86,7 @@ def powerfunct(list, base, exp):
 
 def syscall(list):
     list.append('mov rbx, 0')
-    list.append('move rax, 1')
+    list.append('mov rax, 1')
     list.append('int 0x80')
 
 def add(list, first, second, store):
@@ -120,3 +116,8 @@ def div(list, first, second, store):
 def copy(list, fromVar, toVar):
     list.append('mov rdx, ['+ fromVar +']')
     list.append('mov [' + toVar +'], rdx')
+
+
+def loadValues(list, var, number):
+    list.append('mov rcx, ' + number + " ;loading value "+ number +" into " + var ) 
+    list.append('mov ['+ var + '], rcx')

@@ -220,6 +220,7 @@ with open('./tests/finalFile.txt')as file:
             # symbolTableStack.append(newSymbolTable)
             newScope = Scope()
             scopestack.append(newScope)
+            TOP(scopestack).addCommand(ogLine)
         if '}' in line:
             functionList.append(scopestack.pop())
 
@@ -305,15 +306,6 @@ with open('./tests/finalFile.txt')as file:
 
 
 
-# #generate a list of trees
-# tempTreeList = []
-# for tree in TOP(scopestack).symbolTable.treeMap:
-#     tempTreeList.append(TOP(scopestack).symbolTable.treeMap[tree])
-
-# for scope in functionList:
-#     for tree in scope.symbolTable.treeMap:
-#         tempTreeList.append(scope.symbolTable.treeMap[tree])
-
  
 [scopestack.append(x) for x in functionList]
 
@@ -328,19 +320,52 @@ for scope in scopestack:
         except:
             errorVars.append(var)
 
-#adding our optimized vars into data section
+#adding our optimized vars into bss section
+varsAddedToDataSection = []
 for var in scopestack[0].symbolTable.map:
-    if scopestack[0].symbolTable.map[var] != None:
-        try:
-            sanatized = str(int(float(scopestack[0].symbolTable.map[var])))
-            add2DataSection(var + " db " + sanatized)
-        except:
-            continue
+    if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
+        add2BssSection(var + ": resd 1 ")
+        varsAddedToDataSection.append(var)
+
+s = 0
+for cmd in scopestack[0].cammands:
+    if 'printString' in cmd:
+        cmd = cmd.removeprefix('printString ')
+        add2DataSection('s' + str(s) +": db " + cmd + ", 0" )
+        cmd = 'printString s' + str(s)
+        s += 1
 
 outList = []
 addDataSection(outList)
 addBssSection(outList)
 addTextSection(outList)
+outList.append('main: ')
+
+
+for var in scopestack[0].symbolTable.map:
+    if var in varsAddedToDataSection:
+        try:
+            sanatized = str(int(float(scopestack[0].symbolTable.map[var])))
+            loadValues(outList, var, sanatized)
+        except:
+            continue
+
+
+for cmd in scopestack[0].cammands:
+    if 'printNum' in cmd:
+        cmd = cmd.removeprefix('printNum ')
+        try:
+            if scopestack[0].symbolTable.map[cmd] != None and cmd in varsAddedToDataSection:
+                printInt(outList, cmd)
+        except:
+            continue
+    if 'printString' in cmd:
+        cmd = cmd.removeprefix('printString ')
+        printString(outList, cmd)
+
+
+syscall(outList)
+
 
 outFile = open("./codeout.asm", 'w')
 for line in outList:
@@ -348,3 +373,4 @@ for line in outList:
 outFile.close()
 
 exit(0)
+#nasm -felf64 ./codeout.asm && gcc -g -no-pie ./codeout.o
