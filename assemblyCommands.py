@@ -1,6 +1,7 @@
 
 ##### Assembly Commands:
 from helperFunctions import is_number
+#from tree import Tree
 
 
 data = []
@@ -150,3 +151,37 @@ def copy(list, fromVar, toVar):
 def loadValues(list, var, number):
     list.append('mov rcx, ' + number + " ;loading value "+ number +" into " + var ) 
     list.append('mov ['+ var + '], rcx')
+
+
+def procedure(list, scope):
+    list.append(scope.procedureName + ": ;" +scope.procedureName + "()")
+    list.append('push rax')
+    list.append('push rbx')
+
+    for cmd in scope.cammands:
+        try:
+            if isinstance(cmd, str):
+                if 'procedure' in cmd:
+                    continue
+                if 'printNum' in cmd:
+                    cmd = cmd.removeprefix('printNum ')
+                    try:
+                        printInt(list, cmd)
+                    except:
+                        continue
+                if 'printString' in cmd:
+                    cmd = cmd.removeprefix('printString ')
+                    printString(list, cmd)
+                if 'readNum' in cmd:
+                    cmd = cmd.removeprefix('readNum ')
+                    readInt(list, cmd)
+                if 'return' in cmd:
+                    list.append('mov rax, [result]')
+            elif cmd.hasVars:
+                cmd.traversWithVars(list, cmd.topNode)
+        except:
+            continue
+
+    list.append('''pop rbx''')
+    list.append('''pop rax''')
+    list.append('ret')

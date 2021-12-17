@@ -326,10 +326,12 @@ for scope in scopestack:
 
 #adding our optimized vars into bss section
 varsAddedToDataSection = []
-for var in scopestack[0].symbolTable.map:
+for scope in scopestack:
+    for var in scope.symbolTable.map:
     # if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
-    add2BssSection(var + ": resd 1 ")
-    varsAddedToDataSection.append(var)
+        if var not in varsAddedToDataSection:
+            add2BssSection(var + ": resd 1 ")
+            varsAddedToDataSection.append(var)
 
 s = 0
 for i, cmd in enumerate(scopestack[0].cammands):
@@ -343,6 +345,12 @@ outList = []
 addDataSection(outList)
 addBssSection(outList)
 addTextSection(outList)
+
+i = len(scopestack) -1
+while(i > 0):
+    procedure(outList, scopestack[i])
+    i -= 1
+
 outList.append('main: ')
 outList.append('push rbp ; Push base pointer onto stack to save it ')
 
