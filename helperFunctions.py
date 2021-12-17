@@ -179,6 +179,40 @@ def subEpsolon(p):
         return p
 
 
+
+    
+
+    # if node.left != None:
+    #     postOrderTraversal(node.left)
+    # if node.right != None:
+    #     postOrderTraversal(node.right)
+
+    # if node.operator in operators:
+    #     val1 = self.traversalStack.pop()
+    #     val2 = self.traversalStack.pop()
+
+    #     val1 = int(float(val1))
+    #     val2 = int(float(val2)) 
+    #     if node.operator == '+':
+    #         self.traversalStack.append(str(val1+val2))
+    #     if node.operator == '-':
+    #         self.traversalStack.append(str(val2-val1))
+    #     if node.operator == '*':
+    #         self.traversalStack.append(str(val1*val2))
+    #     if node.operator == '/':
+    #         if val1 == 0:
+    #             raise("divide by zero")
+    #         self.traversalStack.append(str(val2/val1))
+    #     if node.operator == '^':
+    #         self.traversalStack.append(str(val2**val1))
+    
+    # else:
+    #     if node.operator not in ['(', ')']:
+    #         self.traversalStack.append(node.operator)
+                
+
+
+
 if __name__ =="__main__":
     print(NextWord('    "lets go get tacos"', False))
     print(sys.version_info)

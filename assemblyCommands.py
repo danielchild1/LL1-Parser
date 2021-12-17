@@ -1,4 +1,8 @@
+
 ##### Assembly Commands:
+from helperFunctions import is_number
+
+
 data = []
 bss = []
 
@@ -90,27 +94,51 @@ def syscall(list):
     list.append('int 0x80')
 
 def add(list, first, second, store):
-    list.append('mov rcx, [' + first + "]" )
-    list.append('mov rbx, [' + second + ']')
+    if is_number(first):
+        list.append('mov rcx, ' +first)
+    else:
+        list.append('mov rcx, [' + first + "]" )
+    if is_number(second):
+        list.append('mov rbx, ' +second)
+    else:
+        list.append('mov rbx, [' + second + ']')
     list.append('add rcx, rbx')
     list.append('mov [' + store +'], rcx')
 
 def sub(list, first, second, store):
-    list.append('mov rcx, [' + first + "]" )
-    list.append('mov rbx, [' + second + ']')
+    if is_number(first):
+        list.append('mov rcx, ' +first)
+    else:
+        list.append('mov rcx, [' + first + "]" )
+    if is_number(second):
+        list.append('mov rbx, ' +second)
+    else:
+        list.append('mov rbx, [' + second + ']')
     list.append('sub rcx, rbx')
     list.append('mov [' + store +'], rcx')
 
 def mul(list, first, second, store):
-    list.append('mov rax, [' + first + "]" )
-    list.append('mov rbx, [' + second + ']')
+    if is_number(first):
+        list.append('mov rax, ' + first)
+    else:
+        list.append('mov rax, [' + first + "]" )
+    if is_number(second):
+        list.append('mov rbx, ' + second)
+    else:
+        list.append('mov rbx, [' + second + ']')
     list.append('mul rbx')
     list.append('mov [' + store +'], rax')
 
 def div(list, first, second, store):
-    list.append('mov rax, [' + first + "]" )
-    list.append('mov rbx, [' + second + ']')
-    list.append('xor rdx, rdx')
+    if is_number(first):
+        list.append('mov rax, ' + first)
+    else:
+        list.append('mov rax, [' + first + "]" )
+    if is_number(second):
+        list.append('mov rbx, ' + second)
+    else:
+        list.append('mov rbx, [' + second + ']')
+    list.append('xor rdi, rdi')
     list.append('div rbx')
     list.append('mov [' + store +'], rax')
 

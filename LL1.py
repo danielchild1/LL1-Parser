@@ -267,6 +267,7 @@ with open('./tests/finalFile.txt')as file:
                                 tree.varName = word
                                 TOP(scopestack).symbolTable.Insert(word, None)
                                 TOP(scopestack).symbolTable.addTree(word, tree)
+                                tree.hasVars = True
 
                     else:
                         tree.erroredOut = True
@@ -305,6 +306,7 @@ with open('./tests/finalFile.txt')as file:
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
         TOP(scopestack).addTree(tree)
+        TOP(scopestack).cammands.append(tree)
 
 
 
@@ -325,13 +327,13 @@ for scope in scopestack:
 #adding our optimized vars into bss section
 varsAddedToDataSection = []
 for var in scopestack[0].symbolTable.map:
-    if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
-        add2BssSection(var + ": resd 1 ")
-        varsAddedToDataSection.append(var)
+    # if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
+    add2BssSection(var + ": resd 1 ")
+    varsAddedToDataSection.append(var)
 
 s = 0
 for i, cmd in enumerate(scopestack[0].cammands):
-    if 'printString' in cmd:
+    if isinstance(cmd, str) and 'printString' in cmd:
         cmd = cmd.removeprefix('printString ')
         add2DataSection('s' + str(s) +": db " + cmd + ", 0" )
         scopestack[0].cammands[i] = 'printString s' + str(s)
@@ -355,19 +357,22 @@ for var in scopestack[0].symbolTable.map:
 
 
 for cmd in scopestack[0].cammands:
-    if 'printNum' in cmd:
-        cmd = cmd.removeprefix('printNum ')
-        try:
-            if scopestack[0].symbolTable.map[cmd] != None and cmd in varsAddedToDataSection:
-                printInt(outList, cmd)
-        except:
-            continue
-    if 'printString' in cmd:
-        cmd = cmd.removeprefix('printString ')
-        printString(outList, cmd)
-    if 'readNum' in cmd:
-        cmd = cmd.removeprefix('readNum ')
-        readInt(outList, cmd)
+    if isinstance(cmd, str):
+        if 'printNum' in cmd:
+            cmd = cmd.removeprefix('printNum ')
+            try:
+                if cmd in varsAddedToDataSection:
+                    printInt(outList, cmd)
+            except:
+                continue
+        if 'printString' in cmd:
+            cmd = cmd.removeprefix('printString ')
+            printString(outList, cmd)
+        if 'readNum' in cmd:
+            cmd = cmd.removeprefix('readNum ')
+            readInt(outList, cmd)
+    if isinstance(cmd, Tree) and cmd.hasVars:
+        cmd.traversWithVars(outList, cmd.topNode)
 
 
 syscall(outList)

@@ -1,5 +1,6 @@
 from colorama import Fore, Back, Style
-from helperFunctions import terminals, nonOperatorTerminals, nonTerminals, operators, ronts
+from helperFunctions import is_number, terminals, nonOperatorTerminals, nonTerminals, operators, is_number
+from assemblyCommands import *
 class Node:
     nodeid = 0
     def __init__(self, operator=None):
@@ -38,6 +39,8 @@ class Tree:
             self.erroredOut = False
             self.varName = None
             self.stringgg = " "
+            self.hasVars = False
+            self.hasStored = False
             if operator == None:
                 self.numNodes = -1
             else:
@@ -204,6 +207,7 @@ class Tree:
                     self.traversalStack.append(str(val1*val2))
                 if node.operator == '/':
                     if val1 == 0:
+                        self.erroredOut = True
                         raise("divide by zero")
                     self.traversalStack.append(str(val2/val1))
                 if node.operator == '^':
@@ -216,6 +220,27 @@ class Tree:
         except:
             self.errorMessage("Excpetion thrown in postOrderTraversal()")
     
+    def traversWithVars(self, list,  node):
+        if node.left != None:
+            self.traversWithVars(list, node.left)
+        if node.right != None:
+            self.traversWithVars(list, node.right)
+
+        if node.operator in operators and node.left.operator not in operators and node.right.operator not in operators:
+            if node.operator == '+':
+                    add(list, node.left.operator, node.right.operator, self.varName)
+            if node.operator == '-':
+                    sub(list, node.left.operator, node.right.operator, self.varName)
+            if node.operator == '*':
+                    mul(list, node.left.operator, node.right.operator, self.varName)
+            if node.operator == '/' and node.right.operator != '0':
+                    div(list, node.left.operator, node.right.operator, self.varName)
+        
+        #if only one node in tree copy to variable
+        elif node.left == None and node.right == None and node == self.topNode and is_number(node.operator) == False:
+            copy(list, node.operator, self.varName)
+
+
     def printTraversal(self, node):
         
         if node.left != None:
