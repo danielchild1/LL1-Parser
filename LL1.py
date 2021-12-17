@@ -7,6 +7,7 @@ from Production import Production
 from helperFunctions import *
 from pprint import pprint
 import sys
+from assemblyCommands import *
 
 try:
     assert(sys.version_info[0] == 3 and sys.version_info[1] >= 9)
@@ -219,6 +220,7 @@ with open('./tests/finalFile.txt')as file:
             # symbolTableStack.append(newSymbolTable)
             newScope = Scope()
             scopestack.append(newScope)
+            TOP(scopestack).addCommand(ogLine)
         if '}' in line:
             functionList.append(scopestack.pop())
 
@@ -251,8 +253,10 @@ with open('./tests/finalFile.txt')as file:
                         # if ['printString', 'printNum', 'printIsh', 'readNum'] in ogLine and happenedOnce == False:
                         #     TOP(scopestack).cammands.append(ogLine)
                         #     happenedOnce = True
-                        commands = ['printString', 'printNum', 'printIsh', 'readNum', 'return']
-                        [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and ogLine not in TOP(scopestack).cammands]
+                        if happenedOnce == False:
+                            commands = ['printString', 'printNum', 'printIsh', 'readNum', 'return']
+                            [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and happenedOnce == False]
+                            happenedOnce = True
 
 
                         if word2Terminal(word) == "name" and thisvar == "" and 'print' not in ogLine and 'read' not in ogLine:
@@ -263,6 +267,7 @@ with open('./tests/finalFile.txt')as file:
                                 tree.varName = word
                                 TOP(scopestack).symbolTable.Insert(word, None)
                                 TOP(scopestack).symbolTable.addTree(word, tree)
+                                tree.hasVars = True
 
                     else:
                         tree.erroredOut = True
@@ -301,42 +306,90 @@ with open('./tests/finalFile.txt')as file:
             continue
         print(Fore.GREEN + ogLine + Style.RESET_ALL)
         TOP(scopestack).addTree(tree)
-
-
-print('\n\n Trees printed in post order traversal')
-#Post Order Traversal
-#GO LEFT
-#Go RIGHT
-#DO Operand 
-# for treeList in TOP(scopestack).symbolTable.treeMap:
-#     for i, tree in enumerate(treeList):
-#         try:
-#             if tree.erroredOut == False:
-#                 #print(tree.numNodes)
-#                 tree.postOrderTraversal(tree.topNode)
-#                 symboltable.update(tree.varName, tree.traversalStack[0])
-#                 tree.printTraversal(tree.topNode)
-#                 #outPut
-#                 print(tree.varName + " " + tree.stringgg)
-#         except:
-#             continue
-
-tempTreeList = []
-for tree in TOP(scopestack).symbolTable.treeMap:
-    tempTreeList.append(TOP(scopestack).symbolTable.treeMap[tree])
-
-for scope in functionList:
-    for tree in scope.symbolTable.treeMap:
-        tempTreeList.append(scope.symbolTable.treeMap[tree])
-
-#pprint(tempTreeList)
-
-print("\n\n variables and their values")
-#pprint(symboltable.map)
+        TOP(scopestack).cammands.append(tree)
 
 
 
+ 
+[scopestack.append(x) for x in functionList]
+
+#calculating vars we might already know
+#"optomizing"
+errorVars = []
+for scope in scopestack:
+    for var in scope.symbolTable.map:
+        try:
+            scope.symbolTable.treeMap[var].postOrderTraversal(scope.symbolTable.treeMap[var].topNode)
+            scope.symbolTable.map[var] = scope.symbolTable.treeMap[var].traversalStack[0]
+        except:
+            errorVars.append(var)
+
+#adding our optimized vars into bss section
+varsAddedToDataSection = []
+for scope in scopestack:
+    for var in scope.symbolTable.map:
+    # if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
+        if var not in varsAddedToDataSection:
+            add2BssSection(var + ": resd 1 ")
+            varsAddedToDataSection.append(var)
+
+s = 0
+for i, cmd in enumerate(scopestack[0].cammands):
+    if isinstance(cmd, str) and 'printString' in cmd:
+        cmd = cmd.removeprefix('printString ')
+        add2DataSection('s' + str(s) +": db " + cmd + ", 0" )
+        scopestack[0].cammands[i] = 'printString s' + str(s)
+        s += 1
+
+outList = []
+addDataSection(outList)
+addBssSection(outList)
+addTextSection(outList)
+
+i = len(scopestack) -1
+while(i > 0):
+    procedure(outList, scopestack[i])
+    i -= 1
+
+outList.append('main: ')
+outList.append('push rbp ; Push base pointer onto stack to save it ')
+
+
+for var in scopestack[0].symbolTable.map:
+    if var in varsAddedToDataSection:
+        try:
+            sanatized = str(int(float(scopestack[0].symbolTable.map[var])))
+            loadValues(outList, var, sanatized)
+        except:
+            continue
+
+
+for cmd in scopestack[0].cammands:
+    if isinstance(cmd, str):
+        if 'printNum' in cmd:
+            cmd = cmd.removeprefix('printNum ')
+            try:
+                if cmd in varsAddedToDataSection:
+                    printInt(outList, cmd)
+            except:
+                continue
+        if 'printString' in cmd:
+            cmd = cmd.removeprefix('printString ')
+            printString(outList, cmd)
+        if 'readNum' in cmd:
+            cmd = cmd.removeprefix('readNum ')
+            readInt(outList, cmd)
+    if isinstance(cmd, Tree) and cmd.hasVars:
+        cmd.traversWithVars(outList, cmd.topNode)
+
+
+syscall(outList)
+
+
+outFile = open("./codeout.asm", 'w')
+for line in outList:
+    outFile.write(line + '\n')
+outFile.close()
 
 exit(0)
-
-
+#nasm -felf64 ./codeout.asm && gcc -g -no-pie ./codeout.o

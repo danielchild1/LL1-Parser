@@ -158,6 +158,13 @@ def onion(first, second):
 def TOP(list):
     return list[len(list)-1]
 
+def is_number(num):
+    try:
+        float(num)
+        return True
+    except:
+        return False
+
 def subEpsolon(p):
     if isinstance(p, list):
         newList = []
@@ -170,6 +177,40 @@ def subEpsolon(p):
         return None
     else:
         return p
+
+
+
+    
+
+    # if node.left != None:
+    #     postOrderTraversal(node.left)
+    # if node.right != None:
+    #     postOrderTraversal(node.right)
+
+    # if node.operator in operators:
+    #     val1 = self.traversalStack.pop()
+    #     val2 = self.traversalStack.pop()
+
+    #     val1 = int(float(val1))
+    #     val2 = int(float(val2)) 
+    #     if node.operator == '+':
+    #         self.traversalStack.append(str(val1+val2))
+    #     if node.operator == '-':
+    #         self.traversalStack.append(str(val2-val1))
+    #     if node.operator == '*':
+    #         self.traversalStack.append(str(val1*val2))
+    #     if node.operator == '/':
+    #         if val1 == 0:
+    #             raise("divide by zero")
+    #         self.traversalStack.append(str(val2/val1))
+    #     if node.operator == '^':
+    #         self.traversalStack.append(str(val2**val1))
+    
+    # else:
+    #     if node.operator not in ['(', ')']:
+    #         self.traversalStack.append(node.operator)
+                
+
 
 
 if __name__ =="__main__":
