@@ -41,8 +41,8 @@ def printFloat(list, floatName):
 
 def printString(list, stringName):
     list.append('mov rsi, ' + stringName + ';print string: ' + stringName)
-    list.append('mov rdi, [fmtstr]')
-    list.append('mov rax, 0')
+    list.append('mov rdi, fmtstr')
+    list.append('xor rax, rax')
     list.append('call printf')
 
 
@@ -57,7 +57,7 @@ def printUInt(list, intval):
 def readInt(list, intvar):
     list.append('lea rdi, [fmtuintin]' + ' ;read int ' + intvar)
     list.append('lea rsi, ['+intvar+']')
-    list.append('xor rax, rax')
+    list.append('mov rax, 0')
     list.append('call scanf')
 
 def printInt(list, intVar):
@@ -110,6 +110,7 @@ def mul(list, first, second, store):
 def div(list, first, second, store):
     list.append('mov rax, [' + first + "]" )
     list.append('mov rbx, [' + second + ']')
+    list.append('xor rdx, rdx')
     list.append('div rbx')
     list.append('mov [' + store +'], rax')
 

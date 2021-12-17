@@ -328,11 +328,11 @@ for var in scopestack[0].symbolTable.map:
         varsAddedToDataSection.append(var)
 
 s = 0
-for cmd in scopestack[0].cammands:
+for i, cmd in enumerate(scopestack[0].cammands):
     if 'printString' in cmd:
         cmd = cmd.removeprefix('printString ')
         add2DataSection('s' + str(s) +": db " + cmd + ", 0" )
-        cmd = 'printString s' + str(s)
+        scopestack[0].cammands[i] = 'printString s' + str(s)
         s += 1
 
 outList = []
@@ -362,6 +362,9 @@ for cmd in scopestack[0].cammands:
     if 'printString' in cmd:
         cmd = cmd.removeprefix('printString ')
         printString(outList, cmd)
+    if 'readNum' in cmd:
+        cmd = cmd.removeprefix('readNum ')
+        readInt(outList, cmd)
 
 
 syscall(outList)
