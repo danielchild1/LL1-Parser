@@ -184,21 +184,11 @@ for A in nonTerminals:
 #pprint(parseTable)
 
 
-# outputString = ''
-# for p in parseTable:
-#     for r in parseTable[p]:
-#         outputString += r
-#     print(outputString)
-#     outputString == ''
+
 from tree import Tree
 from symboltable import SymbolTable
 from scope import Scope
-# treeList = []
 
-# symboltable = SymbolTable()
-
-# symbolTableStack = []
-# symbolTableStack.append(symboltable)
 
 functionList = []
 scopestack = []
@@ -206,6 +196,8 @@ scopestack.append(Scope())
 TOP(scopestack).addSTable(SymbolTable())
 
 
+
+# LL1 Parser 
 print("Valiate lines: ")
 #simple binary tree LL1 parser
 #sudo code on page 112 of textbook
@@ -310,7 +302,7 @@ with open('./tests/finalFile.txt')as file:
 
 
 
- 
+ #move scopes back to the same list
 [scopestack.append(x) for x in functionList]
 
 #calculating vars we might already know
@@ -328,11 +320,11 @@ for scope in scopestack:
 varsAddedToDataSection = []
 for scope in scopestack:
     for var in scope.symbolTable.map:
-    # if scopestack[0].symbolTable.map[var] != None and is_number(scopestack[0].symbolTable.map[var]):
         if var not in varsAddedToDataSection:
             add2BssSection(var + ": resd 1 ")
             varsAddedToDataSection.append(var)
 
+#adding strings to the data section
 s = 0
 for i, cmd in enumerate(scopestack[0].cammands):
     if isinstance(cmd, str) and 'printString' in cmd:
@@ -341,11 +333,13 @@ for i, cmd in enumerate(scopestack[0].cammands):
         scopestack[0].cammands[i] = 'printString s' + str(s)
         s += 1
 
+#these functions add the generated commands to the 
 outList = []
 addDataSection(outList)
 addBssSection(outList)
 addTextSection(outList)
 
+#generate procedures
 i = len(scopestack) -1
 while(i > 0):
     procedure(outList, scopestack[i])
@@ -354,7 +348,7 @@ while(i > 0):
 outList.append('main: ')
 outList.append('push rbp ; Push base pointer onto stack to save it ')
 
-
+#load values we know into the vars
 for var in scopestack[0].symbolTable.map:
     if var in varsAddedToDataSection:
         try:
@@ -363,7 +357,7 @@ for var in scopestack[0].symbolTable.map:
         except:
             continue
 
-
+#either parse tree with vars or pars two word commands
 for cmd in scopestack[0].cammands:
     if isinstance(cmd, str):
         if 'printNum' in cmd:
@@ -382,10 +376,10 @@ for cmd in scopestack[0].cammands:
     if isinstance(cmd, Tree) and cmd.hasVars:
         cmd.traversWithVars(outList, cmd.topNode)
 
-
+#add the ending assembly 
 syscall(outList)
 
-
+#write commands in outList to the file
 outFile = open("./codeout.asm", 'w')
 for line in outList:
     outFile.write(line + '\n')
