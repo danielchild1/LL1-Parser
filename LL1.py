@@ -253,8 +253,10 @@ with open('./tests/finalFile.txt')as file:
                         # if ['printString', 'printNum', 'printIsh', 'readNum'] in ogLine and happenedOnce == False:
                         #     TOP(scopestack).cammands.append(ogLine)
                         #     happenedOnce = True
-                        commands = ['printString', 'printNum', 'printIsh', 'readNum', 'return']
-                        [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and ogLine not in TOP(scopestack).cammands]
+                        if happenedOnce == False:
+                            commands = ['printString', 'printNum', 'printIsh', 'readNum', 'return']
+                            [TOP(scopestack).cammands.append(ogLine) for x in commands if x in ogLine and happenedOnce == False]
+                            happenedOnce = True
 
 
                         if word2Terminal(word) == "name" and thisvar == "" and 'print' not in ogLine and 'read' not in ogLine:
@@ -340,6 +342,7 @@ addDataSection(outList)
 addBssSection(outList)
 addTextSection(outList)
 outList.append('main: ')
+outList.append('push rbp ; Push base pointer onto stack to save it ')
 
 
 for var in scopestack[0].symbolTable.map:
